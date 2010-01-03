@@ -1,0 +1,54 @@
+8
+
+dir
+192
+http://svn.private.hakobera.com/Root/Prj/DancePod-Web/trunk2/lib/Logic/DB
+http://svn.private.hakobera.com/Root
+
+
+
+2009-08-22T07:47:40.128092Z
+170
+admin
+
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+47ba15b3-24cc-44be-bf2d-fd807afce534
+
+Pager.pm
+file
+
+
+
+
+2009-08-22T07:48:55.000000Z
+563e00b9d67cd137b6724feadc53ab76
+2009-08-22T07:47:40.128092Z
+170
+admin
+has-props
+
+Profile.pm
+file
+
+
+
+
+2009-08-22T07:48:55.000000Z
+cb42c16ca1baa0f02ce7ecfea3c7ee5b
+2009-08-22T07:47:40.128092Z
+170
+admin
+has-props
+

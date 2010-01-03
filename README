@@ -1,0 +1,21 @@
+NAME
+    Shaq
+
+SYNOPSIS
+    use Shaq::Api::DBIC;
+    use Shaq::Api::TT;
+
+    my $dbic = Shaq::Api::DBIC->new;
+    my $tt   = Shaq::Api::TT->new;
+
+WARNINGS
+    This is my personal, toy and experimental my project.
+    This Api will added, updated or removed without any notice.
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2009 okamura
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+

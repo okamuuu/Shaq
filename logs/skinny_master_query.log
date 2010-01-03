@@ -1,0 +1,15 @@
+drop table if exists users
+create table users ( id INTEGER PRIMARY KEY AUTOINCREMENT, rid VARCHAR(10) NOT NULL, name TEXT NOT NULL, birth_on DATE, created_at DATETIME )
+INSERT INTO users (`created_at`, `name`, `rid`) VALUES (?, ?, ?) :binds 2010-01-02 20:26:47, nekokak, SoRMcQ5jU0
+SELECT id, rid, name, birth_on, created_at FROM users ORDER BY created_at DESC LIMIT 10 :binds 
+SELECT COUNT(id) AS cnt FROM users :binds 
+drop table if exists users
+create table users ( id INTEGER PRIMARY KEY AUTOINCREMENT, rid VARCHAR(10) NOT NULL, name TEXT NOT NULL, birth_on DATE, created_at DATETIME )
+INSERT INTO users (`created_at`, `name`, `rid`) VALUES (?, ?, ?) :binds 2010-01-02 20:27:11, nekokak, NXIEblgjrk
+SELECT id, rid, name, birth_on, created_at FROM users ORDER BY created_at DESC LIMIT 10 :binds 
+SELECT COUNT(id) AS cnt FROM users :binds 
+drop table if exists users
+create table users ( id INTEGER PRIMARY KEY AUTOINCREMENT, rid VARCHAR(10) NOT NULL, name TEXT NOT NULL, birth_on DATE, created_at DATETIME )
+INSERT INTO users (`created_at`, `name`, `rid`) VALUES (?, ?, ?) :binds 2010-01-02 20:28:01, nekokak, i21Q1OJWVm
+SELECT id, rid, name, birth_on, created_at FROM users ORDER BY created_at DESC LIMIT 10 :binds 
+SELECT COUNT(id) AS cnt FROM users :binds 

@@ -1,0 +1,11 @@
+Changes
+MANIFEST
+Makefile.PL
+README
+lib/Shaq.pm
+lib/Shaq.pm
+lib/Shaq/Tools.pm
+lib/Shaq/Utils.pm
+t/00-load.t
+t/pod-coverage.t
+t/pod.t

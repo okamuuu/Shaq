@@ -1,0 +1,7 @@
+= TODO =
+
+ * DBIx::ClassとDBIx::Skinnyのベンチマークを取る
+ * Shaq::Api::DBICとShaq::Api::Skinnyのベンチマークを取る
+ * DBIx::MocoとData::
+ * Shaq::Webをab, http_loadを使って計測する
+

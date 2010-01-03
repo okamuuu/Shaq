@@ -1,0 +1,8 @@
+SQL Statement: 
+SELECT me.id, me.category_id, me.title, me.description FROM books me
+-- Take 0.0032 seconds.
+
+SQL Statement: 
+SELECT me.id, me.category_id, me.title, me.description FROM books me
+-- Take 0.0187 seconds.
+
