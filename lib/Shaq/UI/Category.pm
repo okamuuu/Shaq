@@ -2,22 +2,6 @@ package Shaq::UI::Category;
 use strict;
 use warnings;
 
-=head1 NAME
-
-Shaq::UI::Category - UI 
-
-=head1 METHODS
-
-=head2 new
-
-=head2 categories
-
-=head2 base_url
-
-=head2 xhtml
-
-=cut
-
 sub new {
     my ($class) = @_;
 
@@ -83,4 +67,25 @@ sub xhtml {
 }
 
 1;
+
+__END__
+
+=head1 NAME
+
+Shaq::UI::Category - UI 
+
+=head1 METHODS
+
+=head2 new
+
+=head2 categories
+
+=head2 base_url
+
+=head2 current
+
+=head2 xhtml
+
+=cut
+
 
