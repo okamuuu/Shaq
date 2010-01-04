@@ -120,3 +120,22 @@ sub setup_handler {
 
 1;
 
+=head1 NAME
+
+Shaq::Api::Skinny::ShardManager - ShardManager
+
+=head1 METHODS
+
+=head2 new 
+
+=head2 manager_db 
+
+=head2 base_db_class
+
+=head2 base_datasource
+
+=head2 datasource_from
+
+=head2 handler_for
+
+=head2 setup_handler

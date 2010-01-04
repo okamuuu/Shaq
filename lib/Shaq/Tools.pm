@@ -36,8 +36,8 @@ sub run {
         };
 
         ### getcwdは実行したファイルの位置ではなく、実行した場所を返してくれる
-#        dir( getcwd, 't')->recurse( callback => $cb );
-        dir( $Bin, '..',  't')->recurse( callback => $cb );
+        dir( getcwd, 't')->recurse( callback => $cb );
+#        dir( $Bin, '..',  't')->recurse( callback => $cb );
 
         @test_files = shuffle @test_files; # ほう、混ぜる？
     }

@@ -23,7 +23,7 @@ describe 'contruction test' => run {
 
     test 'xhtml' => run {
 
-        eq_or_diff $category->xhtml, <<"_EOF_"; 
+        is $category->xhtml, <<"_EOF_"; 
 <!-- category[start] -->
 <ul id="nav">
 <li><a href="http://www.example.com/" class="home">HOME</a></li>
@@ -35,7 +35,7 @@ _EOF_
 
     $category->categories([qw/home news_test recommend_test/]);
  
-        eq_or_diff $category->xhtml, <<"_EOF_"; 
+        is $category->xhtml, <<"_EOF_"; 
 <!-- category[start] -->
 <ul id="nav">
 <li><a href="http://www.example.com/" class="home">HOME</a></li>
@@ -47,7 +47,7 @@ _EOF_
 
     $category->current("home");
  
-        eq_or_diff $category->xhtml, <<"_EOF_"; 
+        is $category->xhtml, <<"_EOF_"; 
 <!-- category[start] -->
 <ul id="nav">
 <li><a href="http://www.example.com/" class="home current">HOME</a></li>

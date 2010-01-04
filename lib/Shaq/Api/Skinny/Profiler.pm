@@ -44,3 +44,15 @@ sub _normalize {
 
 1;
 
+=head1 NAME
+
+Shaq::Api::Skinny::Profiler - Profiler
+
+=head1 METHODS
+
+=head2 new
+
+=head2 log_path
+
+=head2 record_query
+

@@ -71,24 +71,22 @@ sub _home_dir { return Path::Class::Dir->new( $Bin, '..' ); }
 
 1;
  
+__END__
  
 =head1 NAME
 
-Shaq::Api::TT - The great new Shaq::Api::TT!
+Shaq::Api::TT - Api
 
-=head1 VERSION
+=head1 METHODS
 
-Version 0.01
+=head2 new
 
-=head1 SYNOPSIS
+=head2 tmpl_file
 
-    use Shaq::Api::TT;
+=head2 stash
 
-    my $foo = Shaq::Api::TT->new();
-    ...
+=head2 tt
 
+=head2 c
 
-
-=cut
-
-1;
+=head2 render

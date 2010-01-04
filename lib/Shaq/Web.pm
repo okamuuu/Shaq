@@ -1,36 +1,35 @@
 package Shaq::Web;
+use strict;
+use warnings;
 use Carp;
-use Mouse;
 use Module::Find;
+use UNIVERSAL::require;
 use Path::Class;
-use URI;
 use Shaq::Web::Utils;
 use Shaq::Web::Context;
 use Plack::Request;
 use String::CamelCase qw/decamelize/;
 use Term::ANSIColor qw(:constants);
-use UNIVERSAL::require;
-
-use Data::Dumper;
 
 our $VERSION = '0.02';
 local $Term::ANSIColor::AUTORESET = 0;
 
-has 'app'      => ( is => 'ro', isa => 'Str', required => 1 );
-has 'config'   => ( is => 'ro', predicate => 'has_config' );
-has 'plugins'  => ( is => 'ro', isa => 'ArrayRef' );
-has 'home_dir' => ( is => 'ro', default => sub { Shaq::Web::Utils::home_dir(); } );
-has 'uri'  => ( is => 'ro', isa => 'URI' );
-
-no Mouse; # no more suggar
-
-sub BUILDARGS {
-    my ( $self, %arg ) = @_;
-    $self->SUPER::BUILDARGS(
-        app     => $self,
-        config  => $arg{config},
-    );
+sub new {
+    my ( $class, %arg ) = @_;
+   
+    my $config = $arg{config};
+    my $home_dir = $arg{home_dir} || Shaq::Web::Utils::home_dir();
+    
+    my $self = bless {
+        _app    => $class,
+        _config => $config,
+        _home_dir => $home_dir,
+    } , $class;
 }
+
+sub app      { $_[0]->{_app} }
+sub config   { $_[0]->{_config} }
+sub home_dir { $_[0]->{_home_dir} }
 
 sub handler {
     my $self = shift;
@@ -38,14 +37,18 @@ sub handler {
     #----------------------------------------
     # common handle
     #----------------------------------------
-    ### construction api
     my $app = $self->app;
-    my $api = "${app}::Api";
-    $api =~ s/Web::Api/Api/; # 後で考える
-   
-    $api->use or die "Cant' use $api..";
+    my $proj = $app;
+    $proj =~ s/::Web$//;
 
-    my $api_instance = $api->new($self->config);
+    my $api = "${proj}::Api";
+    my $ui  = "${proj}::UI";
+
+    $api->use or die "Cant' use api.. $@";
+    $ui->use or die "Cant' use ui.. $@";
+    
+    my $api_instance = $api->new($self->config->{api});
+    my $ui_instance  = $ui->new($self->config->{ui});
     
     ### prepare search and use controllers
     my @controllers = useall "${app}::Controller";
@@ -80,6 +83,7 @@ sub handler {
             request  => $req,
             response => $res,
             api      => $api_instance,
+            ui       => $ui_instance,
             stash    => {},
             config   => $self->config,
         );
@@ -125,29 +129,28 @@ sub handle_500 {
     ];
 }
 
-__PACKAGE__->meta->make_immutable;
+1;
 
+__END__
 
 =head1 NAME
 
-Shaq - The great new Shaq!
-
-=head1 SYNOPSIS
-
-    use Shaq;
-
-    my $foo = Shaq->new();
-    ...
+Shaq::Web - this is not WaF...
 
 =head1 METHODS
 
-=head2 method_name
+=head2 new
 
-=head1 AUTHOR
+=head2 app
 
-okamura, C<< <okamura at example.com> >>
+=head2 config
 
-=cut
+=head2 home_dir
 
-1; # End of Shaq
+=head2 handler
+
+=head2 handle_404
+
+=head2 handle_500
+
 

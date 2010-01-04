@@ -74,3 +74,23 @@ sub set_slave_db {
 
 1;
 
+__END__
+
+=head1 NAME
+
+Shaq::Api::Skinny - Api
+
+=head1 METHODS
+
+=head2 new
+
+=head2 config
+
+=head2 master_db
+
+=head2 slave_db
+
+=head2 set_master_db
+
+=head2 set_slave_db
+

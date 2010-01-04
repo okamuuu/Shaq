@@ -1,7 +1,22 @@
 = TODO =
 
+== 優先 ==
+ 
+ * AnyEventを取り入れる
+
+== やりたい ==
+
  * DBIx::ClassとDBIx::Skinnyのベンチマークを取る
  * Shaq::Api::DBICとShaq::Api::Skinnyのベンチマークを取る
- * DBIx::MocoとData::
+ * DBIx::MocoとData::Modelのラッパーを追加する
+ * Tenjinのラッパーを追加する
  * Shaq::Webをab, http_loadを使って計測する
+ * Shaq::UI::Pagerのインターフェースが七転八倒しすぎてる
+ * Shaq::UI::Breadのaddメソッドはdropとかシャレを効かせてみたい
+ * JS
+ * XS
+
+== 保留 ==
+
+ * Test::DeclareがTest::Differencesのeq_or_diffをカウントしない
 

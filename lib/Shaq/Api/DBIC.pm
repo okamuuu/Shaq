@@ -6,16 +6,6 @@ use IO::File;
 use UNIVERSAL::require;
 use Shaq::Api::DBIC::Profile;
 
-=head1 METHODS
-
-=head2 new
-
-=head2 get_master_schema
-
-=head2 get_slave_schema
-
-=cut
-
 sub new {
     my ( $class, $config ) = @_;
 
@@ -73,35 +63,22 @@ sub get_slave_schema {
     return $schema;
 }
 
-sub pager {
-    my ( $self, $pager, $displayable_block ) = @_;
-
-    ### 一度に表示させるブロック。指定が無ければ11
-    $displayable_block ||=  11;
-
-    ### 1番左側に表示されるページ数
-    $pager->{first_visible_page} =
-      $pager->current_page - int( ( $displayable_block - 1 ) / 2 );
-    $pager->{first_visible_page} = 1 if $pager->{first_visible_page} < 1;
-
-    ### 1番右側に表示されるページ数
-    $pager->{last_visible_page} =
-      $pager->current_page + int( $displayable_block / 2 );
-    $pager->{last_visible_page} = $pager->last_page
-      if $pager->{last_visible_page} > $pager->last_page;
-
-    ### 表示されるページの配列
-    $pager->{visible_pages} =
-      [ $pager->{first_visible_page} .. $pager->{last_visible_page} ];
-
-    ### 複数ページでない場合
-    if ( $pager->{first_visible_page} == $pager->{last_visible_page} ) {
-        $pager->{single_page} = 1;
-    }
-
-    ### 受け取った$pagerに上記の情報を加えてから返す
-    return $pager
-}
-
 1;
+
+=head1 NAME
+
+Shaq::Api::DBIC - Api
+
+=head1 METHODS
+
+=head2 new
+
+=head2 config
+
+=head2 profile
+
+=head2 get_master_schema
+
+=head2 get_slave_schema
+
 

@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
+use Cwd;
 use FindBin qw/$Bin/;
 use Path::Class qw/dir file/;
 
@@ -17,9 +18,9 @@ use App::Options (
 
 my $script = $argv{script};
 
-warn my $src  = file( $Bin, '..',  'eg', $script )->stringify;
-warn my $out  = file( $Bin, '..',  'nytprof.out' )->stringify; 
-warn my $html = dir(  $Bin, '..', 'nytprof' )->stringify; 
+warn my $src  = file( getcwd(), 'eg', $script )->stringify;
+warn my $out  = file( getcwd(), 'nytprof.out' )->stringify; 
+warn my $html = dir(  getcwd(), 'nytprof' )->stringify; 
 
 system("perl -d:NYTProf $src");
 system( "nytprofhtml --out=$html" );

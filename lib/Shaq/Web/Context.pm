@@ -10,16 +10,16 @@ has 'home_dir' => ( is => 'ro', isa => 'Path::Class::Dir' );
 has 'request'  => ( is => 'ro', isa => 'Plack::Request' );
 has 'response' => ( is => 'ro', isa => 'Plack::Response' );
 has 'api'      => ( is => 'ro');
+has 'ui'       => ( is => 'ro');
 has 'stash'    => ( is => 'rw', isa => 'HashRef' );
 has 'config'   => ( is => 'ro', isa => 'HashRef' );
 
 no Mouse;
 
-### aliases
+__PACKAGE__->meta->make_immutable;
+
 sub res { shift->response(@_); }
 sub req { shift->request(@_); }
-
-__PACKAGE__->meta->make_immutable;
 
 sub uri_for {
     my ( $self, $path ) = @_;
@@ -75,7 +75,24 @@ sub redirect {
     $self->response->redirect($location);
 }
 
-
 1;
  
+__END__
 
+=head1 NAME
+
+haq::Web::Context - context
+
+=head1 METHODS
+
+=head2 res
+
+=head2 req
+
+=head2 uri_for
+
+=head2 uri_with
+
+=head2 escape
+
+=head2 redirect

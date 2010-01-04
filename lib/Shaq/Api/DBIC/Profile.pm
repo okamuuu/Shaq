@@ -32,6 +32,15 @@ sub query_end {
 
 1;
 
+__END__
 
+=head1 NAME
 
+Shaq::Api::DBIC::Profile - dbic profiler
+
+=head1 METHODS
+
+=head2 query_start
+
+=head2 query_end
 

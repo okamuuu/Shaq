@@ -52,7 +52,7 @@ sub path_to {
     my $path = Path::Class::Dir->new( &home , @path );
 
     if ( -d $path ) { return $path }
-    else { return Path::Class::File->new( &home, @path )->stringify }
+    else { return Path::Class::File->new( &home, @path ) }
 }
 
 1;

@@ -7,27 +7,7 @@ use LWP::UserAgent;
 use Cache::Memcached::Fast;
 use WebService::Simple;
 use Shaq::Api::Msg;
-use Shaq::Api::Pager;
-
-=head1 NAME 
-
-Shaq::Api::WebService::Base - WebService Base class
-
-=head1 METHODS
-
-=head2 new
-
-=head2 ua
-
-=head2 ws
-
-=head2 msg
-
-=head2 pager
-
-=head2 parse
-
-=cut
+use Data::Page;
 
 sub new {
     my ( $class, %arg ) = @_;
@@ -56,7 +36,7 @@ sub new {
         _ws    => $ws,
         _ua    => LWP::UserAgent->new,
         _msg   => Shaq::Api::Msg->new,
-        _pager => Shaq::Api::Pager->new,
+        _pager => Data::Page->new,
     }, $class;
 }
 
@@ -82,4 +62,27 @@ sub parse {
 }
 
 1;
+
+__END__
+
+=head1 NAME 
+
+Shaq::Api::WebService::Base - WebService Base class
+
+=head1 METHODS
+
+=head2 new
+
+=head2 ua
+
+=head2 ws
+
+=head2 msg
+
+=head2 pager
+
+=head2 parse
+
+=cut
+
 

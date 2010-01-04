@@ -22,6 +22,7 @@ sub new {
         wrapper_file => $wrapper,
         extension    => '.mt',
         include_path => [$tmpl_dir],
+        escape_func  => undef,
     );
 
     my $self = bless {
@@ -65,19 +66,22 @@ sub _home_dir { return Path::Class::Dir->new( $Bin, '..' ); }
 
 
 1;
- 
+
+__END__
  
 =head1 NAME
 
-Shaq::Api::MT - The great new Shaq::Api::MT!
+Shaq::Api::MT - Api
 
-=head1 VERSION
+=head1 METHODS
 
-Version 0.01
+=head2 new
 
-=head1 SYNOPSIS
+=head2 tmpl_file
 
-    use Shaq::Api::TT;
+=head2 stash
 
-=cut
+=head2 mt
 
+=head2 render
+ 

@@ -6,7 +6,6 @@ use FindBin qw($Bin);
 use Path::Class::File;
 use Path::Class::Dir;
 
-
 sub path_to {
     my (@path) = @_;
     my $path = Path::Class::Dir->new( home_dir(), @path );
@@ -18,4 +17,14 @@ sub path_to {
 sub home_dir { Path::Class::Dir->new( $Bin, '..' ); }
 
 1;
+
+=head1 NAME
+
+Shaq::Web::Utils - Utility class
+
+=head1 METHODS
+
+=head2 path_to
+
+=head2 home_dir
 
