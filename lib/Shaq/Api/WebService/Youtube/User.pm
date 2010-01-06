@@ -11,7 +11,8 @@ sub new {
     my ( $class, $config ) = @_;
     my $self = $class->SUPER::new( %$config,
         parser  => "XML::Simple",
-        base_url => "http://gdata.youtube.com/feeds/api/" );
+        base_url => "http://gdata.youtube.com/feeds/api/" 
+    );
 }
 
 sub get {
