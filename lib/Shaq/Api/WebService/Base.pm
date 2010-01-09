@@ -14,7 +14,7 @@ sub new {
 
     my $base_url        = $arg{base_url} or croak("Plase set base_url..");
     my $response_parser = $arg{parser} || "XML::Simple";
-    my $namespace       = $arg{parser} || 'webservice';
+    my $namespace       = $arg{namespace} || 'webservice';
 
     my $cache = Cache::Memcached::Fast->new(
         {
