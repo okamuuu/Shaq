@@ -2,30 +2,6 @@ package Shaq::Api::Msg;
 use strict;
 use warnings;
 
-=head1 NAME 
-
-Shaq::Api::Msg - message class
-
-=head1 METHODS
-
-=head2 new
-
-=head2 clear
-
-=head2 set_errors
-
-=head2 set_messages
-
-=head2 get_errors
-
-=head2 get_messages
-
-=head2 has_errors
-
-=head2 has_messages
-
-=cut
-
 sub new { 
     my ( $class, %arg ) = @_;
 
@@ -79,3 +55,27 @@ sub get_messages { $_[0]->{_messages} }
 sub has_messages { scalar @{ $_[0]->get_messages } }
  
 1;
+
+=head1 NAME 
+
+Shaq::Api::Msg - message class
+
+=head1 METHODS
+
+=head2 new
+
+=head2 clear
+
+=head2 set_errors
+
+=head2 set_messages
+
+=head2 get_errors
+
+=head2 get_messages
+
+=head2 has_errors
+
+=head2 has_messages
+
+

@@ -23,7 +23,6 @@ Shaq::DB::Mixin::Extend - My personal library
 sub register_method {
     {
         listing           => \&listing,
-        extend_pager      => \&extend_pager,
         lately            => \&lately,
         toggle_display_fg => \&toggle_display_fg,
     };

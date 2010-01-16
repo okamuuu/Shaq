@@ -73,6 +73,19 @@ sub import {
             $args->{$key} ||= $now if grep { /^$key$/ } @$columns;
         }
     };
+
+    #-----------------------------------------------------------
+    # Cache 
+    #-----------------------------------------------------------
+    my $cb = sub {
+        my ( $self, $args, $table ) = @_;
+        $self->clear_cache($table) if $self->can('clear_cache');
+    };
+
+    push @{ $schema->common_triggers->{post_insert} }, $cb;
+    push @{ $schema->common_triggers->{post_update} }, $cb;
+    push @{ $schema->common_triggers->{post_delete} }, $cb;
+
 }
 
 1;

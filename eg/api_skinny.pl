@@ -62,35 +62,3 @@ for my $row ( @$rows ) {
 }
 
 
-
-
-
-__END__
-
-# UPDATE user set name = 'yappo' WHERE id = 1;
-# を実行
-# $row->update({name => 'yappo'});でも同じ
-$db->update('user',{name => 'yappo'}, {id => $row->id});
-
-# SELECT * FROM user WHERE name = 'nekokak'
-# を実行
-$row = $db->search('user', {name => 'yappo'})->first;
-print $row->id, "\n";   # print 1
-print $row->name, "\n"; # print 'yappo'
-print $row->created_at, "\n";
-
-# SELECT * FROM user WHERE id = 1 limit 1;
-# を実行
-$row = $db->single('user', {id => 1});
-print $row->id, "\n";   # print 1
-print $row->name, "\n"; # print 'yappo'
-
-# count
-my $count = $db->count('user' , 'id', {name => 'nekokak'});
-print $count , "\n";
-
-# DELETE FROM user WHERE id = 1;
-# を実行
-$db->delete('user',{id =>1});
-
-warn Dumper ( Proj::DB->query_log);

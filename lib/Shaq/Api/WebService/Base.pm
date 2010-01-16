@@ -10,11 +10,13 @@ use Shaq::Api::Msg;
 use Data::Page;
 
 sub new {
-    my ( $class, %arg ) = @_;
+#    my ( $class, %arg ) = @_;
+    my ( $class, $config ) = @_;
 
-    my $base_url        = $arg{base_url} or croak("Plase set base_url..");
-    my $response_parser = $arg{parser} || "XML::Simple";
-    my $namespace       = $arg{namespace} || 'webservice';
+    my $base_url        = $config->{base_url} or croak("Plase set base_url..");
+    my $param           = $config->{param} || {};
+    my $response_parser = $config->{parser} || "XML::Simple";
+    my $namespace       = $config->{namespace} || 'webservice';
 
     my $cache = Cache::Memcached::Fast->new(
         {
@@ -28,6 +30,7 @@ sub new {
 
     my $ws = WebService::Simple->new(
         base_url        => $base_url,
+        param           => $param,
         response_parser => $response_parser,
         cache           => $cache,
     );

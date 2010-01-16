@@ -6,11 +6,11 @@ use Carp;
 use Params::Validate qw/validate_pos/;
 
 sub new {
-    my ( $class, %arg ) = @_;
+    my ( $class, $config ) = @_;
 
-    my $manager_db      = $arg{manager_db};
-    my $base_db_class   = $arg{base_db_class};
-    my $base_datasource = $arg{base_datasource};
+    my $manager_db      = $config->{manager_db};
+    my $base_db_class   = $config->{base_db_class};
+    my $base_datasource = $config->{base_datasource};
 
     my $self = bless {
         _manager_db      => $manager_db,
@@ -27,7 +27,6 @@ sub datasource_from {
     my ( $self, $node ) = @_;
     
     my $dsn = sprintf(
-#        'dbi:mysql:%s_%s_%s;hostname=%s',
         'dbi:sqlite:%s_%s',
         $node->type, $node->number, # $node->host
     ); # eg. dbi:sqlite:db/uesr_01.db
