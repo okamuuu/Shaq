@@ -4,10 +4,12 @@ use warnings;
 use Perl6::Say;
 use Data::Dumper;
 use Data::Dump qw(dump);
+use Devel::Size qw(size total_size);
 use FindBin qw($Bin);
 use Path::Class qw/dir file/;
 use lib dir($Bin, '..', 'lib')->stringify;
 use lib dir($Bin, '..', 'extlib')->stringify;
+
 use Shaq::Api::Skinny;
 
 my $config = {
@@ -40,7 +42,8 @@ $db->do(q{
         rid      VARCHAR(10) NOT NULL,
         name     TEXT    NOT NULL,
         birth_on DATE,
-        created_at DATETIME
+        created_at DATETIME,
+        updated_at DATETIME
     )
 });
 
@@ -52,13 +55,13 @@ print $row->rid, "\n";   # print 1
 print $row->name, "\n"; # print 'nekokak'
 print $row->created_at, "\n";
 print $row->created_at->ymd, "\n";
+warn size $row;
 
 #$db->create('users',{name => 'takada'});
 
 my ( $rows, $pager ) = $db->listing('users');
 
 for my $row ( @$rows ) {
-    say $row;
+    warn size $row;
 }
-
 
