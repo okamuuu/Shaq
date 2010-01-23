@@ -107,7 +107,6 @@ sub handler {
         else {
             return $context->response->finalize;
         }
-
     }
 }
 

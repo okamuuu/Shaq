@@ -22,7 +22,7 @@ sub new {
         wrapper_file => $wrapper,
         extension    => '.mt',
         include_path => [$tmpl_dir],
-#        escape_func  => undef,
+        escape_func  => undef,
     );
 
     my $self = bless {
@@ -44,7 +44,12 @@ sub render {
     $stash    ||= $self->stash;
     
     $self->mt->template_args( $stash );
-    my $content = $self->mt->render( $template );
+
+    ### $mt_encoded_stirngの状態でもFireFoxでレンダリングできるが
+    ### IEでは長さの判定がうまくいかず途中でhtmlが途切れる。
+    ### この問題の解決に時間がずいぶんかかってしまった。
+    my $mt_encoded_stirng = $self->mt->render( $template ); 
+    my $content = $mt_encoded_stirng->as_string;
 
     ### フラグがあればencode 
     if ( utf8::is_utf8($content) ) {

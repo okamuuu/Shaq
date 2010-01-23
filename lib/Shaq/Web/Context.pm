@@ -1,9 +1,8 @@
 package Shaq::Web::Context;
 use Mouse;
+use DateTimeX::Web;
 use URI::QueryParam;
 use String::CamelCase qw/decamelize/;
-
-use Data::Dumper;
 
 has 'app'      => ( is => 'ro', isa => 'Str' );
 has 'home_dir' => ( is => 'ro', isa => 'Path::Class::Dir' );
@@ -11,6 +10,7 @@ has 'request'  => ( is => 'ro', isa => 'Plack::Request' );
 has 'response' => ( is => 'ro', isa => 'Plack::Response' );
 has 'api'      => ( is => 'ro');
 has 'ui'       => ( is => 'ro');
+has 'dtx'      => ( is => 'ro');
 has 'stash'    => ( is => 'rw', isa => 'HashRef' );
 has 'config'   => ( is => 'ro', isa => 'HashRef' );
 
@@ -60,6 +60,7 @@ sub uri_with {
 }
 
 ### Text::MicroTemplate::Plugin::XMLEscapeとかあればいいな
+### ぬぅ、そもそもTest::MicroTemplateは自動的にエスケープするのか…
 sub escape {
     my ( $self, $text ) = @_;
     $text =~ s/&/&amp;/go;
