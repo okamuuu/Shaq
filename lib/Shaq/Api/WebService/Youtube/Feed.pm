@@ -8,9 +8,17 @@ our $DEBUG=0;
 
 sub new {
     my ( $class, $config ) = @_;
-    my $self = $class->SUPER::new( %$config,
-        parser   => "XML::Feed",
-        base_url => "http://gdata.youtube.com/feeds/api/" );
+        
+    my $parser   = $config->{parser} || "XML::Feed";
+    my $base_url = $config->{base_url} || "http://gdata.youtube.com/feeds/api/";
+
+    my $self = $class->SUPER::new(
+        {
+            parser   => $parser,
+            base_url => $base_url
+        }
+    );
+
 }
 
 sub parse {
@@ -60,13 +68,13 @@ sub videos {
     $pager->entries_per_page( $limit );
     $pager->current_page( $page );
 
-    my $videos = _feed2videos($feed);
+    my $videos = $self->_feed2videos($feed);
 
     return ( $videos, $pager );    
 }
 
 sub _feed2videos {
-    my ( $feed ) = @_;
+    my ( $self, $feed ) = @_;
 
     my @videos;
     for my $entry ( $feed->entries ) {
@@ -83,6 +91,8 @@ sub _feed2videos {
         my $published =
           $entry->{entry}->{elem}->getElementsByTagName('published')
           ->string_value;
+        $published =~ s/\.\d\d\dZ//g;
+
         my @keywords = split ', ',
           $entry->{entry}->{elem}->getElementsByTagName('media:keywords')
           ->string_value;
@@ -94,7 +104,7 @@ sub _feed2videos {
             thum_url    => $thum_url,
             thum_width  => $thum_width,
             thum_height => $thum_height,
-            published   => $published,
+            published   => $self->dtx->from_rss($published), # DateTime
             keywords    => [@keywords],
         };
         push @videos, $video;

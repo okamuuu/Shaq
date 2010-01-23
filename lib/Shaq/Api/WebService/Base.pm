@@ -8,6 +8,9 @@ use Cache::Memcached::Fast;
 use WebService::Simple;
 use Shaq::Api::Msg;
 use Data::Page;
+use DateTimeX::Web;
+use DateTime::Format::Atom;
+use DateTime::Format::Mail;
 
 sub new {
 #    my ( $class, %arg ) = @_;
@@ -40,6 +43,8 @@ sub new {
         _ua    => LWP::UserAgent->new,
         _msg   => Shaq::Api::Msg->new,
         _pager => Data::Page->new,
+        _dt    => DateTime::Format::Atom->new(time_zone => 'Asia/Tokyo'),
+        _dtx   => DateTimeX::Web->new(time_zone => 'Asia/Tokyo'),
     }, $class;
 }
 
@@ -47,6 +52,8 @@ sub ua    { $_[0]->{_ua} }
 sub ws    { $_[0]->{_ws} }
 sub msg   { $_[0]->{_msg} }
 sub pager { $_[0]->{_pager} }
+sub dt    { $_[0]->{_dt} }
+sub dtx   { $_[0]->{_dtx} }
 
 sub parse {
     my ( $self, $path, $attr ) = @_;

@@ -12,6 +12,7 @@ requires 'UNIVERSAL::require';
 requires 'Test::MicroTemplate::File';
 requires 'XML::LibXML';
 requires 'XML::Feed';
+requires 'DateTimeX::Web';
 
 build_requires 'Test::More';
 

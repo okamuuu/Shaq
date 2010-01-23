@@ -9,9 +9,14 @@ our $DEBUG=0;
 
 sub new {
     my ( $class, $config ) = @_;
-    my $self = $class->SUPER::new( %$config,
-        parser  => "XML::Simple",
-        base_url => "http://gdata.youtube.com/feeds/api/" 
+
+    my $parser   = $config->{parser} || "XML::Simple";
+    my $base_url = $config->{base_url} || "http://gdata.youtube.com/feeds/api/";
+
+    my $self = $class->SUPER::new( {
+        parser  => $parser,
+        base_url => $base_url,
+    }
     );
 }
 
