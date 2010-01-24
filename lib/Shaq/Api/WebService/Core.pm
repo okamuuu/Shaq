@@ -36,14 +36,13 @@ sub new {
         param           => $param,
         response_parser => $response_parser,
         cache           => $cache,
+        param           => { api_key => $api_key, }
     );
 
     my $self = bless {
         _ws    => $ws,
         _ua    => LWP::UserAgent->new,
         _msg   => Shaq::Api::Msg->new,
-        _pager => Data::Page->new,
-        _dt    => DateTime::Format::Atom->new(time_zone => 'Asia/Tokyo'),
         _dtx   => DateTimeX::Web->new(time_zone => 'Asia/Tokyo'),
     }, $class;
 }
@@ -51,16 +50,14 @@ sub new {
 sub ua    { $_[0]->{_ua} }
 sub ws    { $_[0]->{_ws} }
 sub msg   { $_[0]->{_msg} }
-sub pager { $_[0]->{_pager} }
-sub dt    { $_[0]->{_dt} }
 sub dtx   { $_[0]->{_dtx} }
 
 sub parse {
-    my ( $self, $path, $attr ) = @_;
+    my ( $self, $param ) = @_;
 
     my $data;
     try {
-        $data = $self->ws->get($path, $attr)->parse_response;
+        $data = $self->ws->get($param)->parse_response;
         $self->msg->set_errors("nothing...") unless $data; # or die XML::Feed->errstrとか、Parserをカスタムしよ
     }
     catch {

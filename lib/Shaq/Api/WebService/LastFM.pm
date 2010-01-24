@@ -1,7 +1,6 @@
 package Shaq::Api::WebService::LastFM;
 use strict;
 use warnings;
-use Try::Tiny;
 use Shaq::Api::WebService::Core;
 
 =head1 NAME
@@ -34,22 +33,21 @@ sub new {
     }, $class;
 }
 
-sub core { $_[0]->{_core} }
+sub ua    { $_[0]->{_core}->ua }
+sub ws    { $_[0]->{_core}->ws }
+sub msg   { $_[0]->{_core}->msg }
+sub dtx   { $_[0]->{_core}->dtx }
+sub parse { shift->{_core}->parse(@_) }
 
-sub parse {
-    my ( $self, $param ) = @_;
+sub get_similar_artist {
+    my ( $self, $name ) = @_;
 
-    my $data;
-    try {
-        $data = $self->core->ws->get($param)->parse_response;
-        $self->core->msg->set_errors("nothing...") unless $data;
-    }
-    catch {
-        $self->core->msg->set_errors( $_ );
-        return undef;
+    my $param = { 
+        method => 'artist.getsimilar', 
+        artist => $name, 
     };
 
-    return $data;
+    $self->parse($param);
 }
 
 1;
