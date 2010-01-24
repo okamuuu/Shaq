@@ -14,18 +14,20 @@ Shaq::Api::WebService::LastFM - Api
 =cut
 
 sub new {
-    my ( $class, $config ) = @_;
+    my ( $class, $cache,  $config ) = @_;
 
-    my $api_key   = $config->{api_key} or Carp::croak("Please set 'api_key' to use LastFM Web API ...");
+    my $api_key   = $config->{base_param}->{api_key} or Carp::croak("Please set 'api_key' to use LastFM Web API ...");
     my $parser    = $config->{parser}    || "XML::Simple";
-    my $base_url  = $config->{base_url}  || 'http://ws.audioscrobbler.com/2.0';
-    my $namespace = $config->{namespace} || 'last_fm_';
+    my $host      = $config->{host}  || 'http://ws.audioscrobbler.com/2.0';
+    my $base_path = $config->{base_path};
+    my $base_param = $config->{base_param};
 
-    my $core = Shaq::Api::WebService::Core->new({
-        api_key         => $api_key,
+    my $core = Shaq::Api::WebService::Core->new($cache, {
+        base_param      => { api_key => $api_key},
         response_parser => $parser,
-        base_url        => $base_url,
-        namespace       => $namespace,
+        host            => $host,
+        base_path       => $base_path,
+        base_param      => $base_param,
     }); 
 
     my $self = bless {
@@ -33,10 +35,7 @@ sub new {
     }, $class;
 }
 
-sub ua    { $_[0]->{_core}->ua }
-sub ws    { $_[0]->{_core}->ws }
-sub msg   { $_[0]->{_core}->msg }
-sub dtx   { $_[0]->{_core}->dtx }
+sub get   { shift->{_core}->get(@_) }
 sub parse { shift->{_core}->parse(@_) }
 
 sub get_similar_artist {
@@ -47,7 +46,7 @@ sub get_similar_artist {
         artist => $name, 
     };
 
-    $self->parse($param);
+    $self->parse({ param => $param });
 }
 
 1;

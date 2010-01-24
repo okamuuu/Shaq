@@ -4,68 +4,105 @@ use warnings;
 use Carp;
 use Try::Tiny;
 use LWP::UserAgent;
-use Cache::Memcached::Fast;
-use WebService::Simple;
-use Shaq::Api::Msg;
-use Data::Page;
-use DateTimeX::Web;
-use DateTime::Format::Atom;
-use DateTime::Format::Mail;
+use XML::Simple;
+use Digest::MD5 ();
+#use URI::Escape;
+#use Shaq::Api::Msg;
+#use DateTimeX::Web;
 
 sub new {
-    my ( $class, $config ) = @_;
-    
-    my $param           = $config->{param} || {}; # for WebService::Simple
-    my $api_key         = $config->{api_key} or croak("Please set 'api_key' for LastFM Web API ...");
-    my $base_url        = $config->{base_url} or croak("Please set 'base_url' for WebService::Simple ...");
-    my $response_parser = $config->{response_parser} or croak("Please set 'response_parser' for WebService::Simple ...");
-    my $namespace       = $config->{namespace} or croak("Please set 'namespace' for Cache::Memcached::Fast ...");
+    my ( $class, $cache, $config ) = @_;
 
-    my $cache = Cache::Memcached::Fast->new(
-        {
-            servers => [ { address => 'localhost:11211'} ],
-            namespace => $namespace,
-        }
-    );
+# あー集約だとこれできないのかー
+#    croak("Please set 'cache object' ...")
+#      unless $cache->isa('Cache::Memcached::Fast');
 
-    croak("Memcachedが起動していません。")
-      unless keys %{ $cache->server_versions };
-
-    my $ws = WebService::Simple->new(
-        base_url        => $base_url,
-        param           => $param,
-        response_parser => $response_parser,
-        cache           => $cache,
-        param           => { api_key => $api_key, }
-    );
+    my $debug      = $config->{debug} || 0;    
+    my $host       = $config->{host} or croak("Please set 'host' ...");
+    my $base_path  = $config->{base_path} || undef;
+    my $base_param = $config->{base_param} || {};
 
     my $self = bless {
-        _ws    => $ws,
-        _ua    => LWP::UserAgent->new,
-        _msg   => Shaq::Api::Msg->new,
-        _dtx   => DateTimeX::Web->new(time_zone => 'Asia/Tokyo'),
+        _debug      => $debug,
+        _parser     => XML::Simple->new,
+        _ua         => LWP::UserAgent->new,
+        _uri        => URI->new($host),
+        _base_path  => $base_path,
+        _base_param => $base_param,
+        _cache      => $cache,
     }, $class;
+
 }
 
-sub ua    { $_[0]->{_ua} }
-sub ws    { $_[0]->{_ws} }
-sub msg   { $_[0]->{_msg} }
-sub dtx   { $_[0]->{_dtx} }
+sub parser     { $_[0]->{_parser} }
+sub ua         { $_[0]->{_ua} }
+sub uri        { $_[0]->{_uri} }
+sub base_path  { $_[0]->{_base_path} }
+sub base_param { $_[0]->{_base_param} }
+sub cache      { $_[0]->{_cache}->memd  }
 
-sub parse {
-    my ( $self, $param ) = @_;
+sub get {
+    my ( $self, $extra ) = @_;
 
-    my $data;
-    try {
-        $data = $self->ws->get($param)->parse_response;
-        $self->msg->set_errors("nothing...") unless $data; # or die XML::Feed->errstrとか、Parserをカスタムしよ
+    my $path       = $extra->{path} || $self->base_path;
+    my $param      = $extra->{param} || {};
+    my $base_param = $self->base_param || {};
+
+    $self->uri->path( $path );
+    $self->uri->query_form( {%{$base_param}, %{$param}}  );
+
+    my $request_url = $self->uri->as_string;
+
+warn    my $response = $self->_cache_get( $request_url );
+
+    if ( not $response ) {
+        $response = $self->ua->get($request_url);
+
+        if ( !$response->is_success ) {
+            Carp::croak("request to $request_url failed");
+        }
+        
+        $self->_cache_set( $request_url, $response );
     }
-    catch {
-        $self->msg->set_errors( $_ );
-        return undef;
-    };
-    
-    return $data;
+
+    my $content = $response->content;
+
+    $self->parser->XMLin( $content ); 
+}
+
+sub _cache_get {
+    my $self  = shift;
+    my $cache = $self->cache;
+    return unless $cache;
+
+    my $key = $self->_cache_key(shift);
+    return $cache->get( $key, @_ );
+}
+
+sub _cache_set {
+    my $self  = shift;
+    my $cache = $self->cache;
+    return unless $cache;
+
+    my $key = $self->_cache_key(shift);
+    return $cache->set( $key, @_ );
+}
+
+sub _cache_remove {
+    my $self  = shift;
+    my $cache = $self->cache;
+    return unless $cache;
+
+    my $key = $self->_cache_key(shift);
+    return $cache->remove( $key, @_ );
+}
+
+sub _cache_key {
+    my $self = shift;
+    local $Data::Dumper::Indent   = 1;
+    local $Data::Dumper::Terse    = 1;
+    local $Data::Dumper::Sortkeys = 1;
+    return Digest::MD5::md5_hex( Data::Dumper::Dumper( $_[0] ) );
 }
 
 1;
