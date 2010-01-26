@@ -1,62 +1,50 @@
-package Shaq::Api::WebService::Core;
+package Shaq::Api::WebService::Lite;
 use strict;
 use warnings;
-use Carp;
-use Try::Tiny;
 use LWP::UserAgent;
 use XML::Simple;
 use Digest::MD5 ();
-#use URI::Escape;
-#use Shaq::Api::Msg;
-#use DateTimeX::Web;
+our $VERSION = '0.01';
 
 sub new {
-    my ( $class, $cache, $config ) = @_;
+    my ( $class, $config, $cache ) = @_;
 
-# あー集約だとこれできないのかー
-#    croak("Please set 'cache object' ...")
-#      unless $cache->isa('Cache::Memcached::Fast');
-
+    if ( $cache ) {
+# canでcacheオブジェクトであることを確認したい
+    }
+    
     my $debug      = $config->{debug} || 0;    
-    my $host       = $config->{host} or croak("Please set 'host' ...");
+    my $host       = $config->{host} or Carp::croak("Please set 'host' ...");
     my $base_path  = $config->{base_path} || undef;
     my $base_param = $config->{base_param} || {};
+
+    my $uri = URI->new($host);
+    $uri->path( $base_path ) if $base_path;
 
     my $self = bless {
         _debug      => $debug,
         _parser     => XML::Simple->new,
         _ua         => LWP::UserAgent->new,
-        _uri        => URI->new($host),
-        _base_path  => $base_path,
+        _uri        => $uri,
         _base_param => $base_param,
         _cache      => $cache,
     }, $class;
 
 }
 
-sub parser     { $_[0]->{_parser} }
-sub ua         { $_[0]->{_ua} }
-sub uri        { $_[0]->{_uri} }
-sub base_path  { $_[0]->{_base_path} }
-sub base_param { $_[0]->{_base_param} }
-sub cache      { $_[0]->{_cache}->memd  }
-
 sub get {
     my ( $self, $extra ) = @_;
 
-    my $path       = $extra->{path} || $self->base_path;
-    my $param      = $extra->{param} || {};
-    my $base_param = $self->base_param || {};
+    my $uri = $self->_uri->clone;
 
-    $self->uri->path( $path );
-    $self->uri->query_form( {%{$base_param}, %{$param}}  );
+    $uri->path( $extra->{path} ) if $extra->{path};
+    $uri->query_form( %{$self->_base_param}, %{$extra->{param}} );
 
-    my $request_url = $self->uri->as_string;
-
-warn    my $response = $self->_cache_get( $request_url );
+    my $request_url = $uri->as_string;
+    my $response    = $self->_cache_get($request_url);
 
     if ( not $response ) {
-        $response = $self->ua->get($request_url);
+        $response = $self->_ua->get($request_url);
 
         if ( !$response->is_success ) {
             Carp::croak("request to $request_url failed");
@@ -67,12 +55,18 @@ warn    my $response = $self->_cache_get( $request_url );
 
     my $content = $response->content;
 
-    $self->parser->XMLin( $content ); 
+    $self->_parser->XMLin( $content ); 
 }
+
+sub _parser     { $_[0]->{_parser} }
+sub _ua         { $_[0]->{_ua} }
+sub _uri        { $_[0]->{_uri} }
+sub _base_param { $_[0]->{_base_param} }
+sub _cache      { $_[0]->{_cache}->memd if $_[0]->{_cache} }
 
 sub _cache_get {
     my $self  = shift;
-    my $cache = $self->cache;
+    my $cache = $self->_cache;
     return unless $cache;
 
     my $key = $self->_cache_key(shift);
@@ -81,7 +75,7 @@ sub _cache_get {
 
 sub _cache_set {
     my $self  = shift;
-    my $cache = $self->cache;
+    my $cache = $self->_cache;
     return unless $cache;
 
     my $key = $self->_cache_key(shift);
@@ -90,7 +84,7 @@ sub _cache_set {
 
 sub _cache_remove {
     my $self  = shift;
-    my $cache = $self->cache;
+    my $cache = $self->_cache;
     return unless $cache;
 
     my $key = $self->_cache_key(shift);
@@ -111,21 +105,13 @@ __END__
 
 =head1 NAME 
 
-Shaq::Api::WebService::Core - WebService Core class
+Shaq::Api::WebService::Lite - My Personal Class
 
 =head1 METHODS
 
 =head2 new
 
-=head2 ua
-
-=head2 ws
-
-=head2 msg
-
-=head2 pager
-
-=head2 parse
+=head2 get
 
 =cut
 

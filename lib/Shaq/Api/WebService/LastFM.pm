@@ -14,7 +14,7 @@ Shaq::Api::WebService::LastFM - Api
 =cut
 
 sub new {
-    my ( $class, $cache,  $config ) = @_;
+    my ( $class, $config, $cache ) = @_;
 
     my $api_key   = $config->{base_param}->{api_key} or Carp::croak("Please set 'api_key' to use LastFM Web API ...");
     my $parser    = $config->{parser}    || "XML::Simple";
@@ -22,13 +22,13 @@ sub new {
     my $base_path = $config->{base_path};
     my $base_param = $config->{base_param};
 
-    my $core = Shaq::Api::WebService::Core->new($cache, {
+    my $core = Shaq::Api::WebService::Core->new( {
         base_param      => { api_key => $api_key},
         response_parser => $parser,
         host            => $host,
         base_path       => $base_path,
         base_param      => $base_param,
-    }); 
+    }, $cache); 
 
     my $self = bless {
         _core  => $core,
