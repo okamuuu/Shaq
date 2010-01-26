@@ -10,7 +10,9 @@ sub new {
     my ( $class, $config, $cache ) = @_;
 
     if ( $cache ) {
-# canでcacheオブジェクトであることを確認したい
+        Carp::croak("This cache object can't get ...") unless $cache->can('get');
+        Carp::croak("This cache object can't set ...") unless $cache->can('set');
+        Carp::croak("This cache object can't remove ...") unless $cache->can('remove');
     }
     
     my $debug      = $config->{debug} || 0;    
