@@ -1,8 +1,8 @@
 package Shaq::Api::WebService::Lite;
 use strict;
 use warnings;
+use UNIVERSAL::require;
 use LWP::UserAgent;
-use XML::Simple;
 use Digest::MD5 ();
 our $VERSION = '0.01';
 
@@ -19,19 +19,25 @@ sub new {
     my $host       = $config->{host} or Carp::croak("Please set 'host' ...");
     my $base_path  = $config->{base_path} || undef;
     my $base_param = $config->{base_param} || {};
+    my $parser     = $config->{parser} || "XML::Simple";
 
     my $uri = URI->new($host);
     $uri->path( $base_path ) if $base_path;
 
     my $self = bless {
         _debug      => $debug,
-        _parser     => XML::Simple->new,
         _ua         => LWP::UserAgent->new,
         _uri        => $uri,
         _base_param => $base_param,
         _cache      => $cache,
     }, $class;
 
+    ### load parser object
+    my $module = __PACKAGE__ . "::Parser::$parser";
+    $module->require or die $@;
+    $self->{_parser} = $module->new;
+    
+    $self; 
 }
 
 sub get {
@@ -57,9 +63,10 @@ sub get {
 
     my $content = $response->content;
 
-    $self->_parser->XMLin( $content ); 
+    $self->_parse( $content );
 }
 
+sub _parse { $_[0]->_parser->parse_content( $_[1] ) }
 sub _parser     { $_[0]->{_parser} }
 sub _ua         { $_[0]->{_ua} }
 sub _uri        { $_[0]->{_uri} }
