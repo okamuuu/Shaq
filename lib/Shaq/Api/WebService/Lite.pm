@@ -21,6 +21,10 @@ sub new {
     my $base_param = $config->{base_param} || {};
     my $parser     = $config->{parser} || "XML::Simple";
 
+    if ( not $parser =~ m/XML::Simple|XML::LibXML::Simple|JSON::XS/g ) {
+        Carp::croak("please set 'parser' XML::Simple, XML::LibXML::Simple or JSON::XS ...");
+    }
+
     my $uri = URI->new($host);
     $uri->path( $base_path ) if $base_path;
 
@@ -33,9 +37,8 @@ sub new {
     }, $class;
 
     ### load parser object
-    my $module = __PACKAGE__ . "::Parser::$parser";
-    $module->require or die $@;
-    $self->{_parser} = $module->new;
+    $parser->use or die $@;
+    $self->{_parser} = $parser->new;
     
     $self; 
 }
@@ -66,8 +69,21 @@ sub get {
     $self->_parse( $content );
 }
 
-sub _parse { $_[0]->_parser->parse_content( $_[1] ) }
 sub _parser     { $_[0]->{_parser} }
+sub _parse      { 
+    my ( $self, $content ) = @_;
+     
+    if ( $self->_parser =~ m{XML::Simple|XML::LibXML::Simple} ) {
+        return XMLin( $content ); 
+    }
+    elsif ( $self->_parser =~ m{JSON::XS} ) { # JSONでもXSがあればそれが呼ばれるのだけれども
+        return decode_json( $content );
+    }
+    else {}
+
+    Carp::croak("this is not extected ...");
+}
+
 sub _ua         { $_[0]->{_ua} }
 sub _uri        { $_[0]->{_uri} }
 sub _base_param { $_[0]->{_base_param} }
