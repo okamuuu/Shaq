@@ -8,11 +8,11 @@ use Shaq::UI::Menu;
 my $menu = Shaq::UI::Menu->new(
     path    => '/path/to/',
     ext     => '.html',
-    title   => 'READ ME',
+    name    => 'READ ME',
     list    => [
-        { id => 'index', name => 'home' },
-        { id => 'about', name => 'about this site' },
-        { id => 'news',  name => 'new informations' },
+        { id => 'index', title => 'home' },
+        { id => 'about', title => 'about this site' },
+        { id => 'news',  title => 'new informations' },
     ],
 );
 

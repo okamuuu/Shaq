@@ -9,31 +9,31 @@ sub new {
     my $self = bless {
         _path  => $param{path}, 
         _ext   => $param{ext},
-        _title => $param{title} || croak("title..."),
+        _name  => $param{name} || croak("title..."),
         _list  => $param{list}, # チェックが必要かも
     }, $class;
 }
 
 sub path  { $_[0]->{_path}  }
 sub ext   { $_[0]->{_ext}   }
-sub title { $_[0]->{_title} }
+sub name  { $_[0]->{_name}  }
 sub list  { $_[0]->{_list}  }
 
 sub xhtml {
     my ($self) = @_;
 
-    my $title = $self->title;
+    my $name = $self->name;
 
     my $xhtml = qq{<!-- menu[start] -->\n};
     $xhtml   .= qq{<div class="menu">\n};
-    $xhtml   .= qq{    <h3>$title</h3>\n};
+    $xhtml   .= qq{    <h3>$name</h3>\n};
     $xhtml   .= qq{    <ul>\n};
     
     for my $menu ( @{ $self->list } ) {
-        my $name = $menu->{name};
+        my $title = $menu->{title};
         my $href = $self->path . $menu->{id};
         if ( $self->ext ) { $href .= $self->ext } 
-        $xhtml   .= qq{        <li><a href="$href">$name</a></li>\n};
+        $xhtml   .= qq{        <li><a href="$href">$title</a></li>\n};
     }
 
     $xhtml .= qq{    </ul>\n};
