@@ -70,3 +70,6 @@ create table users ( id INTEGER PRIMARY KEY AUTOINCREMENT, rid VARCHAR(10) NOT N
 INSERT INTO users (`created_at`, `updated_at`, `name`, `rid`) VALUES (?, ?, ?, ?) :binds 2010-01-23 12:54:40, 2010-01-23 12:54:40, nekokak, I1clI3f80K
 SELECT id, rid, name, birth_on, created_at, updated_at FROM users ORDER BY created_at DESC LIMIT 10 :binds 
 SELECT COUNT(id) AS cnt FROM users :binds 
+drop table if exists users
+create table users ( id INTEGER PRIMARY KEY AUTOINCREMENT, rid VARCHAR(10) NOT NULL, name TEXT NOT NULL, birth_on DATE, created_at DATETIME, updated_at DATETIME )
+INSERT INTO users (`created_at`, `updated_at`, `name`, `rid`) VALUES (?, ?, ?, ?) :binds 2010-02-04 21:41:02, 2010-02-04 21:41:02, nekokak, IPyrzKsOsl

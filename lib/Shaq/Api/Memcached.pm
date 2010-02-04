@@ -25,17 +25,11 @@ sub new {
     }, $class;
 
     croak("Memcachedが起動していません。")
-      unless keys %{ $self->memd->server_versions };
+      unless keys %{ $self->{_memd}->server_versions };
 
     return $self;
 }
 
-=pod
-
-下記の操作でmemcachedが行っている処理をファイル出力
-したらよいかもしれないと思って
-
-=cut
 
 sub get { 
     my ( $self, $key ) = @_;
