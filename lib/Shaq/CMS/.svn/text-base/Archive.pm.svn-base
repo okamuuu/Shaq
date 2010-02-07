@@ -1,0 +1,15 @@
+package CMS::Lite::Archive;
+use Moose;
+
+has id          => ( is => 'ro', isa => 'Str' );
+has order       => ( is => 'ro', isa => 'Str' );
+has title       => ( is => 'ro', isa => 'Str' );
+has keywords    => ( is => 'ro', isa => 'ArrayRef', auto_deref => 1 );
+has description => ( is => 'ro', isa => 'Maybe[Str]' );
+has content     => ( is => 'ro', isa => 'Str' );
+
+__PACKAGE__->meta->make_immutable;
+
+no Moose;
+
+1;

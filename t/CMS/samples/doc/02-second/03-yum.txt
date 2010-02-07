@@ -1,0 +1,186 @@
+= yum最適化 =
+
+'''''CentOSはFedoraと比較するとyumで利用できるパッケージが少ないです。[[BR]]Fedoraのように多数のパッケージを利用するためrpmforgeとepelを追加します。'''''
+
+== 現状確認と準備 ==
+
+=== 現状確認 ===
+
+まず現在のパッケージ数を確認します。数が少ないです。
+
+{{{
+$ su
+# yum list | wc -l
+2762
+}}}
+
+アーキテクチャを確認
+
+{{{
+# uname -i
+i386
+}}}
+
+=== wgetコマンドを導入 ===
+
+{{{
+# yum -y install wget
+}}}
+
+=== yum-priorities導入 ===
+
+リポジトリに優先度を付加するためのパッケージを導入します。
+
+{{{
+# yum -y install yum-priorities
+}}}
+
+== 標準レポジトリ ==
+
+=== 優先順位を設定 ===
+
+ファイルを修正します。
+
+{{{
+# vim /etc/yum.repos.d/CentOS-Base.repo
+}}}
+
+以下の項目を追加します。
+
+{{{
+[base]
+priority=1
+
+[updates]
+priority=1
+
+[addons]
+priority=1
+
+[extras]
+priority=1
+
+[centosplus]
+priority=2
+
+[contrib]
+priority=3
+
+}}}
+
+前バージョンで削除されていた「contrib」レポジトリが復活しています。
+
+== rpmforge ==
+
+=== インストール ===
+
+{{{
+# cd /usr/local/src
+# wget http://dag.wieers.com/rpm/packages/rpmforge-release/rpmforge-release-0.3.6-1.el5.rf.i386.rpm
+# rpm --import http://dag.wieers.com/rpm/packages/RPM-GPG-KEY.dag.txt
+# rpm -K rpmforge-release-0.3.6-1.el5.rf.*.rpm
+# rpm -i rpmforge-release-0.3.6-1.el5.rf.*.rpm
+}}}
+
+=== 設定ファイル編集 ===
+
+{{{
+# vim /etc/yum.repos.d/rpmforge.repo
+}}}
+
+以下の項目を修正します。優先順位はひとまず標準レポジトリより下げています。また、明示的にこのレポジトリを使用すると宣言しない場合は''enabled''(無効)にしています。
+
+{{{
+[rpmforge]
+enabled = 0
+priority=10
+}}}
+
+== epel ==
+
+=== インストール ===
+
+{{{
+# cd /usr/local/src
+# wget http://download.fedora.redhat.com/pub/epel/5/i386/epel-release-5-3.noarch.rpm
+# rpm -ivh epel-release-5-3.noarch.rpm
+}}}
+
+=== 設定ファイル編集 ===
+
+{{{
+# vim /etc/yum.repos.d/epel.repo
+}}}
+
+{{{
+[epel]
+enabled=0
+priority=20
+}}}
+
+== remi ==
+
+phpのバージョンが5.2へ対応する為にremiも追加
+
+{{{
+# cd /usr/local/src
+# wget http://rpms.famillecollet.com/el5.i386/remi-release-5-7.el5.remi.noarch.rpm
+# rpm -Uvh remi-release-5*.rpm
+}}}
+
+=== 設定 ===
+
+{{{
+# vim /etc/yum.repos.d/remi.repo
+}}}
+
+プライオリティを0、最優先に設定していますが、これはbaseレポジトリにMySQL5.0がありますが
+MySQL5.1をremiレポジトリから取得したいためにbaseレポジトリよりも優先に設定しています。
+
+{{{
+[remi]
+enabled=0
+priority=0
+}}}
+
+
+== 確認 ==
+
+標準レポジトリのみの場合と、rpmforge, epelを追加した場合のパッケージ数を確認します。
+
+{{{
+# yum list | wc -l
+2759
+}}}
+
+{{{
+# yum list --enablerepo=rpmforge | wc -l
+7179
+}}}
+
+{{{
+# yum list --enablerepo=epel | wc -l
+5989
+}}}
+
+{{{
+# yum list --enablerepo=remi | wc -l
+2957
+}}}
+
+== yum utils導入 ==
+
+「You mightconsider running yum-complete-transaction first to finish them 」 と表示された場合は
+yum-complete-transactionを実行します。
+
+これは''yum-utils''をインストールすれば使用できるようになります。
+
+{{{
+# yum -y install yum-utils
+}}}
+
+
+{{{
+# /usr/sbin/yum-complete-transaction
+}}}
+

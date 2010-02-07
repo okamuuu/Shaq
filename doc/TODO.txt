@@ -9,14 +9,17 @@
  * DBIx::ClassとDBIx::Skinnyのベンチマークを取る
  * Shaq::Api::DBICとShaq::Api::Skinnyのベンチマークを取る
  * DBIx::MocoとData::Modelのラッパーを追加する
- * Tenjinのラッパーを追加する
  * Shaq::Webをab, http_loadを使って計測する
  * Shaq::UI::Pagerのインターフェースが七転八倒しすぎてる
  * Shaq::UI::Breadのaddメソッドはdropとかシャレを効かせてみたい
  * JS
  * XS
 
-== 保留 ==
+== Shaq::CMS ==
 
- * Test::DeclareがTest::Differencesのeq_or_diffをカウントしない
+-Siteの中にCatgoryとArchiveを別々に保存
+-重複チェックの機能は全てManagrにやらせる
+-Site, Menu, Archiveを名前空間として用意
+-ManagerはCMS.pmにやらせる
+-Learning::CMSが継承
 

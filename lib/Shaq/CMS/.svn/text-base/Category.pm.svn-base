@@ -1,0 +1,79 @@
+package CMS::Lite::Category;
+use Moose;
+use MooseX::AttributeHelpers;
+
+has name  => ( is => 'ro', isa => 'Str', default => sub {[]}, );
+has order => ( is => 'ro', isa => 'Str', default => sub {[]}, );
+
+has archives   => (
+    is         => 'rw',
+    isa        => 'ArrayRef[CMS::Lite::Archive]',
+    metaclass  => 'Collection::Array',
+    default    => sub { [] },
+    auto_deref => 1,
+    provides   => {
+        push => 'push_archive',
+    },
+);
+
+has ids => (
+    is         => 'rw',
+    isa        => 'ArrayRef',
+    metaclass  => 'Collection::Array',
+    default    => sub { [] },
+    auto_deref => 1,
+    provides   => { push => 'push_id', shift => 'shift_id' },
+);
+
+has titles => (
+    is         => 'rw',
+    isa        => 'ArrayRef',
+    metaclass  => 'Collection::Array',
+    default    => sub { [] },
+    auto_deref => 1,
+    provides   => { push => 'push_title', shift => 'shift_title' },
+);
+
+has menu_list => (
+    is         => 'rw',
+    isa        => 'ArrayRef[HashRef]',
+    metaclass  => 'Collection::Array',
+    default    => sub { [] },
+    auto_deref => 1,
+    provides   => {
+        push  => 'push_menu',
+#        shift => 'shift_menu',
+    },
+);
+
+
+after 'push_archive' => sub {
+    my ( $self, $archive ) = @_;
+
+    $self->push_title( $archive->title ); 
+    $self->push_id( $archive->id ); 
+
+    ### 重複チェック
+    my ( %id_of, %title_of );
+    map { $id_of{$_}++ < 2    ? 'ok' : die("id: $_ is duplicative...")    } $self->ids;
+    map { $title_of{$_}++ < 2 ? 'ok' : die("title: $_ is duplicative...") } $self->titles;
+
+    my $id;
+    if ( $archive->id eq 'index' ) {
+        $id = $archive->id;
+    }
+    else {
+       $id = sprintf( "%02d", $self->order ) . "-" . $archive->id; 
+    }
+
+    $self->push_menu( { id => $id, title => $archive->title } );
+};
+
+
+__PACKAGE__->meta->make_immutable;
+
+no Moose;
+
+1;
+
+

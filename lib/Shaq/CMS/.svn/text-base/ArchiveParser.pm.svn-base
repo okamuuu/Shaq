@@ -1,0 +1,15 @@
+package CMS::Lite::ArchiveParser;
+use Moose;
+
+has parser => ( 
+    is => 'rw',
+    does => 'CMS::Lite::ArchiveParser::Parser',
+    required => 1,
+    handles => [qw/parse/],
+);
+
+__PACKAGE__->meta->make_immutable;
+
+no Moose;
+
+1;

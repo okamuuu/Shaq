@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/Root/!svn/ver/236/Prj/CMS-Lite/trunk/lib/CMS/Lite
+END
+Site.pm
+K 25
+svn:wc:ra_dav:version-url
+V 58
+/Root/!svn/ver/240/Prj/CMS-Lite/trunk/lib/CMS/Lite/Site.pm
+END
+Config.pm
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/Root/!svn/ver/240/Prj/CMS-Lite/trunk/lib/CMS/Lite/Config.pm
+END
+Category.pm
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/Root/!svn/ver/241/Prj/CMS-Lite/trunk/lib/CMS/Lite/Category.pm
+END
+ArchiveParser.pm
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/Root/!svn/ver/200/Prj/CMS-Lite/trunk/lib/CMS/Lite/ArchiveParser.pm
+END
+Utils.pm
+K 25
+svn:wc:ra_dav:version-url
+V 59
+/Root/!svn/ver/240/Prj/CMS-Lite/trunk/lib/CMS/Lite/Utils.pm
+END
+Archive.pm
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/Root/!svn/ver/239/Prj/CMS-Lite/trunk/lib/CMS/Lite/Archive.pm
+END

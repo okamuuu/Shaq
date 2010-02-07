@@ -1,0 +1,52 @@
+package CMS::Lite::ArchiveParser::Trac;
+use Moose;
+with 'CMS::Lite::ArchiveParser::Parser';
+use Carp;
+use CMS::Lite::Archive;
+use Text::Trac;
+use Web::Scraper;
+
+__PACKAGE__->meta->make_immutable;
+
+no Moose;
+
+sub parse {
+    my ( $self , %arg ) = @_;
+
+    my $id   = $arg{id} or croak("Please specify arg: id");
+    my $text = $arg{text} or croak("Please specify arg: text");
+   
+    my $parser = Text::Trac->new;
+    $parser->parse( $text );
+
+    my $html = $parser->html;    
+    
+    $html =~ s!<p>\s*<strong><i>(.*)</i></strong>\s*</p>!<p id="description">$1<\/p>!gm;
+    $html =~ s!<i>([^<]*)</i>!<em>$1<\/em>!g;
+
+    my $scraper = scraper { 
+        process 'h1', 'title' => 'TEXT';
+        process '#description', description => 'TEXT';
+        process 'em', 'emphases[]' => 'TEXT';
+    };
+    my $res = $scraper->scrape( $html );
+
+    ### 強調語句が初めて出現した場合は@keywordsに格納され、2度目は格納されない
+    my %count_of;
+    my @keywords = grep { !$count_of{$_}++ } @{ $res->{emphases} }; 
+    warn "$id has no keyword..." unless @keywords;
+    
+    my %param = (
+        id          => $id,
+        title       => $res->{title},
+        keywords    => [@keywords],
+        description => $res->{description} || '',
+        content     => $html,
+    );
+
+    my $archive = CMS::Lite::Archive->new( %param );
+}
+
+
+1;
+

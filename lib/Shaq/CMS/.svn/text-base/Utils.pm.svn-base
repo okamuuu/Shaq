@@ -1,0 +1,43 @@
+package CMS::Lite::Utils;
+use strict;
+use warnings;
+use Path::Class::Dir;
+use Path::Class::File;
+use FindBin;
+use Carp;
+
+sub home {
+    return $ENV{CMS_LITE_HOME} ||  Path::Class::Dir->new(  $FindBin::Bin, './../' );
+}
+
+sub path_to {
+    my ( @path ) = @_;
+    my $path = Path::Class::Dir->new( &home , @path );
+    if ( -d $path ) { return $path }
+    else { return Path::Class::File->new( &home, @path ) }
+}
+
+sub dirnames {
+    my ( %arg ) = @_;
+    
+    my $target_dir  = $arg{dir};
+    my $chop_prefix = $arg{chop_prefix};
+    croak("Please set arg: dir ...") unless $target_dir;
+
+    my @dirnames;
+    my @childs = Path::Class::Dir->new( &home , $target_dir )->children;
+    for my $child ( @childs ) {
+        next unless $child->is_dir;
+        my @dir_list = $child->dir_list;
+        my $dirname = $dir_list[-1];
+
+        next unless $dirname =~ m/^\d+-(.*)$/;
+
+        push @dirnames, $1; 
+    }
+
+    return @dirnames;
+}
+
+1;
+
