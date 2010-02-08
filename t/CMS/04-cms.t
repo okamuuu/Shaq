@@ -17,11 +17,11 @@ use Shaq::CMS::ArchiveParser::Trac;
 my $doc_dir = dir( $Bin, '..', '..', "t/CMS/samples/doc" );
 my $parser  = Shaq::CMS::ArchiveParser::Trac->new;
 
-my $manager;
+my $site;
 
 subtest "prepate" => sub {
 
-    $manager = Shaq::CMS::Manager->new(
+    $site = Shaq::CMS::Manager->new(
         name        => 'Site Name',
         doc_dir     => dir( $Bin, '..', '..', "t/CMS/samples/doc" ),
         root_dir    => dir( $Bin, '..', '..', "t/CMS/samples/root" ),
@@ -31,11 +31,11 @@ subtest "prepate" => sub {
         parser      => Shaq::CMS::ArchiveParser::Trac->new,
     );
  
-    isa_ok( $manager, "Shaq::CMS::Manager", "object isa Shaq::CMS::Manager" );
-    can_ok( $manager, "file2archive" );  
-    can_ok( $manager, "dir2archives" );  
-    can_ok( $manager, "dir2menus" );  
-    can_ok( $manager, "create_site" );  
+    isa_ok( $site, "Shaq::CMS::Manager", "object isa Shaq::CMS::Manager" );
+    can_ok( $site, "file2archive" );  
+    can_ok( $site, "dir2archives" );  
+    can_ok( $site, "dir2menus" );  
+    can_ok( $site, "create_site" );  
     done_testing();
 };
 
@@ -44,7 +44,7 @@ subtest "create archive from file" => sub {
     my $cat_dir = dir( $Bin, '..', '..', "t/CMS/samples/doc/01-first" );
     
     for my $file ( $cat_dir->children ) {
-        my $archive = $manager->file2archive( $file );
+        my $archive = $site->file2archive( $file );
         isa_ok( $archive, 'Shaq::CMS::Archive' );
     }
 
@@ -55,7 +55,7 @@ subtest "create archives from dir" => sub {
 
     my $target_dir = dir( $Bin, '..', '..', "t/CMS/samples/doc/01-first" );
 
-    for my $archive ( @{ $manager->dir2archives($target_dir) } ) {
+    for my $archive ( @{ $site->dir2archives($target_dir) } ) {
         isa_ok( $archive, 'Shaq::CMS::Archive' );
     }
     done_testing();
@@ -64,10 +64,10 @@ subtest "create archives from dir" => sub {
 
 subtest "create menu object from dir" => sub {
  
-    can_ok( $manager, "dir2menu" );  
+    can_ok( $site, "dir2menu" );  
     
     my $target_dir = dir( $Bin, '..', '..', "t/CMS/samples/doc/01-first" );
-    my $menu       = $manager->dir2menu($target_dir);
+    my $menu       = $site->dir2menu($target_dir);
     
     isa_ok $menu, "Shaq::CMS::Menu";
     
@@ -76,7 +76,7 @@ subtest "create menu object from dir" => sub {
 
 subtest "create site" => sub {
 
-    my $site = $manager->create_site( 'Test' );
+    my $site = $site->create_site( 'Test' );
     isa_ok( $site, 'Shaq::CMS::Site' );
         
     done_testing();

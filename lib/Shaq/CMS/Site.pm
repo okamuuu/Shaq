@@ -4,7 +4,7 @@ use MouseX::AttributeHelpers;
 use MouseX::Types::Path::Class;
 use FindBin qw($Bin);
 use Path::Class qw/dir file/;
-use Template;
+#use Template;
 
 has name => (
     is       => 'ro',
@@ -36,6 +36,7 @@ __PACKAGE__->meta->make_immutable;
 
 no Any::Moose;
 
+=pod
 sub write_to {
     my ( $self, $root_dir ) = @_;
 
@@ -116,6 +117,8 @@ sub upload {
     $ftp->quit;
   
 }
+
+=cut
 
 1;
 

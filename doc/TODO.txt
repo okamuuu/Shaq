@@ -21,5 +21,4 @@
 -重複チェックの機能は全てManagrにやらせる
 -Site, Menu, Archiveを名前空間として用意
 -ManagerはCMS.pmにやらせる
--Learning::CMSが継承
-
+-digest key使って改ざんチェックはしようかしまいか

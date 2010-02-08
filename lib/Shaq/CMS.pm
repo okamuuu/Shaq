@@ -4,50 +4,66 @@ use warnings;
 use FindBin qw($Bin);
 use Path::Class qw/dir file/;
 use Shaq::CMS::Menu;
-use Shaq::CMS::Category;
 use Shaq::CMS::Site;
 
 sub new {
     my ( $class, %arg ) = @_;
-    
-    my $doc_dir = $arg{doc_dir};
-    my $parser  = $arg{parser};
+   
+    my $name     = $arg{name};
+    my $doc_dir  = $arg{doc_dir};
+    my $root_dir = $arg{root_dir};
+    my $parser   = $arg{parser};
 
-    Carp::croak("$doc_dir is not 'Path::Class::Dir' ...")
-      unless $doc_dir->isa('Path::Class::Dir');
+    ### これだけ多いとParams::Validator使いたいなぁ
+    Carp::croak("Please set param 'name' ...") unless $name;
+
+    for my $dir ( ($doc_dir, $root_dir) ) {
+        Carp::croak("$dir is not 'Path::Class::Dir' ...")
+            unless $dir->isa('Path::Class::Dir');
+    }
 
     Carp::croak("$parser couldn't does 'parse' ...")
       unless $parser->can('parse');
 
     bless {
-        _doc_dir => $doc_dir,
-        _parser  => $parser,
+        _name     => $name,
+        _doc_dir  => $doc_dir,
+        _root_dir => $root_dir,
+        _parser   => $parser,
     }, $class;
 
 }
 
-sub doc_dir { $_[0]->{_doc_dir} }
-sub parser  { $_[0]->{_parser}  }
+sub name      { $_[0]->{_name}     }
+sub doc_dir   { $_[0]->{_doc_dir}  }
+sub root_dir  { $_[0]->{_root_dir} }
+sub parser    { $_[0]->{_parser}   }
+sub site      { $_[0]->{_site}     }
 
-sub create_site {
-    my ($self, $name ) = @_;
-    Shaq::CMS::Site->new(name=> $name );
+sub ready {
+    my $site = Shaq::CMS::Site->new( name=> $_[0]->name );
+    $site->add_archives( $_[0]->get_archives ); 
+    $site->add_menus( $_[0]->get_menus ); 
+    $_[0]->{_site} = $site;
+    $_[0];
 }
 
-sub dir2menus {
-    my ( $self, $dir ) = @_;
+sub write {
+    my ($self) = @_;
 
-    Carp::croak("the param must be Path::Class::Dir.")
-      unless $dir->isa('Path::Class::Dir');
-
-    my @menus = map { $self->dir2menu( $_ ) } $dir->children;
-    [@menus];
+    ### ここオーバーライドにしたらTT2でもMTでも任意にできるか？
+            
+     
 }
+
+### FIXME: 以下先頭にアンダースコアつけるか検討
+sub get_archives { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } # deref
+sub get_menus    { map { $_[0]->dir2menu($_)     } $_[0]->doc_dir->children; } # deref
 
 sub dir2menu {
     my ( $self, $dir ) = @_;
 
-    Carp::croak("the param must be Path::Class::Dir.")
+    die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
     my @list = $dir->dir_list;
@@ -67,15 +83,10 @@ sub dir2menu {
 sub dir2archives {
     my ( $self, $dir ) = @_;
 
-    Carp::croak("the param must be Path::Class::Dir.")
+    die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-    my @archives =
-      map  { $self->file2archive($_) } 
-      grep { !$_->is_dir }  
-      $dir->children;
-
-    return [@archives];
+    map { $self->file2archive($_) } $dir->children;
 }
 
 sub file2archive {
