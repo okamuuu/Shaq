@@ -36,6 +36,18 @@ __PACKAGE__->meta->make_immutable;
 
 no Any::Moose;
 
+sub get_pages {
+    my ($self) = @_;
+
+    my @pages = map {
+        {
+            name    => $self->name,
+            menus   => $self->menus,
+            archive => $_,
+        }
+    } @{ $self->archives };
+}
+
 =pod
 sub write_to {
     my ( $self, $root_dir ) = @_;

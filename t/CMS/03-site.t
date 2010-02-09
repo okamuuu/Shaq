@@ -77,5 +77,24 @@ subtest "add menus" => sub {
     done_testing();
 };
 
+subtest "get pages" => sub {
+
+    my @pages = $site->get_pages;
+
+    ok($pages[0]->{name});
+    ok($pages[0]->{menus});
+    ok($pages[0]->{archive});
+
+    is($pages[0]->{name}, "Site Name");
+    is_deeply($pages[0]->{menus}->[0]->get_list, );
+#    is($pages[0]->{menus}->[0]->{title}, "");
+
+
+
+
+
+    done_testing();
+};
+
 done_testing();
 

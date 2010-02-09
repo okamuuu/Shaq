@@ -38,15 +38,8 @@ sub name      { $_[0]->{_name}     }
 sub doc_dir   { $_[0]->{_doc_dir}  }
 sub root_dir  { $_[0]->{_root_dir} }
 sub parser    { $_[0]->{_parser}   }
-sub site      { $_[0]->{_site}     }
 
-sub ready {
-    my $site = Shaq::CMS::Site->new( name=> $_[0]->name );
-    $site->add_archives( $_[0]->get_archives ); 
-    $site->add_menus( $_[0]->get_menus ); 
-    $_[0]->{_site} = $site;
-    $_[0];
-}
+
 
 sub write {
     my ($self) = @_;
@@ -59,6 +52,28 @@ sub write {
 ### FIXME: 以下先頭にアンダースコアつけるか検討
 sub get_archives { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } # deref
 sub get_menus    { map { $_[0]->dir2menu($_)     } $_[0]->doc_dir->children; } # deref
+
+sub watch_file_change {}
+
+sub doc2site {
+    my ( $self ) = @_;
+
+    my $doc = $self->doc_dir;
+
+    my ( @all_archives, @menus );
+    for my $dir ( $doc->children ) {
+        my $menu = $self->dir2menu($dir);
+        my @archives = $self->dir2archives($dir);
+        $menu->add_list({ basename => $_->basename, title => $_->title });
+        push @all_archives, @archives;
+        push @menus, $menu;
+    }
+    
+    my $site = Shaq::CMS::Site->new( name=> $_[0]->name );
+    $site->add_archives( @all_archives ); 
+    $site->add_menus( @menus ); 
+    $site; 
+} 
 
 sub dir2menu {
     my ( $self, $dir ) = @_;
