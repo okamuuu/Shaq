@@ -1,7 +1,7 @@
 package Shaq::CMS::Site;
 use Any::Moose;
-use MouseX::AttributeHelpers;
-use MouseX::Types::Path::Class;
+#use MouseX::AttributeHelpers;
+#use MouseX::Types::Path::Class;
 use FindBin qw($Bin);
 use Path::Class qw/dir file/;
 #use Template;
@@ -39,13 +39,8 @@ no Any::Moose;
 sub get_pages {
     my ($self) = @_;
 
-    my @pages = map {
-        {
-            name    => $self->name,
-            menus   => $self->menus,
-            archive => $_,
-        }
-    } @{ $self->archives };
+    map { { name => $self->name, menus => $self->menus, archive => $_, } }
+      @{ $self->archives };
 }
 
 =pod
@@ -151,8 +146,6 @@ CMS::Lite::Site - framework class
 =head2 upload
 
 =cut
-
-__END__
 
 
 

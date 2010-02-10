@@ -27,6 +27,7 @@ sub new {
 
     bless {
         _name     => $name,
+        _site     => undef,
         _doc_dir  => $doc_dir,
         _root_dir => $root_dir,
         _parser   => $parser,
@@ -35,25 +36,23 @@ sub new {
 }
 
 sub name      { $_[0]->{_name}     }
+sub site      { $_[0]->{_site}     }
 sub doc_dir   { $_[0]->{_doc_dir}  }
 sub root_dir  { $_[0]->{_root_dir} }
 sub parser    { $_[0]->{_parser}   }
 
-
-
-sub write {
-    my ($self) = @_;
-
-    ### ここオーバーライドにしたらTT2でもMTでも任意にできるか？
-            
-     
-}
-
-### FIXME: 以下先頭にアンダースコアつけるか検討
+sub watch_file_change {}
 sub get_archives { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } # deref
 sub get_menus    { map { $_[0]->dir2menu($_)     } $_[0]->doc_dir->children; } # deref
 
-sub watch_file_change {}
+sub write {
+    my ( $self ) = @_;
+
+    for my $page ( $self->site->get_pages ) {
+        
+
+    }
+}
 
 sub doc2site {
     my ( $self ) = @_;
@@ -62,9 +61,14 @@ sub doc2site {
 
     my ( @all_archives, @menus );
     for my $dir ( $doc->children ) {
-        my $menu = $self->dir2menu($dir);
+        my $menu     = $self->dir2menu($dir);
         my @archives = $self->dir2archives($dir);
-        $menu->add_list({ basename => $_->basename, title => $_->title });
+
+        for my $archive (@archives) {
+            $menu->add_list(
+                { basename => $archive->basename, title => $archive->title } );
+        }
+
         push @all_archives, @archives;
         push @menus, $menu;
     }
@@ -72,7 +76,7 @@ sub doc2site {
     my $site = Shaq::CMS::Site->new( name=> $_[0]->name );
     $site->add_archives( @all_archives ); 
     $site->add_menus( @menus ); 
-    $site; 
+    $self->{_site} = $site; 
 } 
 
 sub dir2menu {
@@ -101,7 +105,7 @@ sub dir2archives {
     die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-    map { $self->file2archive($_) } $dir->children;
+    grep { defined $_ } map { $self->file2archive($_) } $dir->children;
 }
 
 sub file2archive {
