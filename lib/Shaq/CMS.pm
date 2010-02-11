@@ -45,23 +45,14 @@ sub watch_file_change {}
 sub get_archives { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } # deref
 sub get_menus    { map { $_[0]->dir2menu($_)     } $_[0]->doc_dir->children; } # deref
 
-sub write {
-    my ( $self ) = @_;
-
-    for my $page ( $self->site->get_pages ) {
-        
-
-    }
-}
-
 sub doc2site {
     my ( $self ) = @_;
 
     my $doc = $self->doc_dir;
 
     my ( @all_archives, @menus );
-    for my $dir ( $doc->children ) {
-        my $menu     = $self->dir2menu($dir);
+    for my $dir ( sort {$a cmp $b} $doc->children ) {
+        my $menu     = $self->dir2menu($dir) or next;
         my @archives = $self->dir2archives($dir);
 
         for my $archive (@archives) {
@@ -76,7 +67,7 @@ sub doc2site {
     my $site = Shaq::CMS::Site->new( name=> $_[0]->name );
     $site->add_archives( @all_archives ); 
     $site->add_menus( @menus ); 
-    $self->{_site} = $site; 
+    $site;
 } 
 
 sub dir2menu {
@@ -105,25 +96,36 @@ sub dir2archives {
     die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-    grep { defined $_ } map { $self->file2archive($_) } $dir->children;
+    my @list = $dir->dir_list;
+    my $dirname = $list[-1];
+ 
+    $dirname =~ m/
+                    ^
+                    (\d+)
+                    -
+                    ([^-]*)   # 日本語OK
+                    $
+                /x;
+    
+    grep { defined $_ } map { $self->file2archive($1, $_) } sort {"$a" cmp "$b"} $dir->children;
 }
 
 sub file2archive {
-    my ( $self, $file ) = @_;
+    my ( $self, $dir_num, $file ) = @_;
 
     Carp::croak("the param must be Path::Class::File.")
       unless $file->isa('Path::Class::File');
 
-    ### XXX: もっと上手く書けないものか
     $file->basename =~ m/^
                           \d+               # 並び順
                           -                 # ハイフン
                           (\w*)             # ファイル名、-は指定できない仕様
                           \.txt             # 拡張子
                           $
-                       /x
-    ? $self->parser->parse( basename => $1, text => scalar $file->slurp ) 
-    : undef;
+                       /x;
+
+warn    my $basename = ( $1 eq 'index' ) ? 'index' : $dir_num . "-" . $1;
+    $self->parser->parse( basename => $basename, text => scalar $file->slurp ) or undef;
 }
 
 1;

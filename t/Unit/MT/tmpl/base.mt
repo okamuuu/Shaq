@@ -6,7 +6,7 @@
 </head>
 <body>
     <div id="content">
-        <? block content => sub {} ?>
+        <% block content => sub {} %>
     </div>
 </body>
 </html>

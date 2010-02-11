@@ -36,7 +36,7 @@ __PACKAGE__->meta->make_immutable;
 
 no Any::Moose;
 
-sub get_pages {
+sub pages {
     my ($self) = @_;
 
     map { { name => $self->name, menus => $self->menus, archive => $_, } }

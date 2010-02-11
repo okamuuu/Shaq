@@ -78,14 +78,8 @@ sub xhtml {
         my $basename = $list->{basename}; 
         my $title    = $list->{title}; 
         
-        if ( $basename eq 'index' ) {
-            $xhtml   .= qq{    <li><a href="$basename.html">$title</a></li>\n};
-        }
-        else {
-            $xhtml   .= qq{    <li><a href="$order-$basename.html">$title</a></li>\n};
-        }
-    }
-    
+       $xhtml   .= qq{    <li><a href="$basename.html">$title</a></li>\n};
+    } 
     $xhtml   .= qq{</ul>\n};
     $xhtml   .= qq{<!-- menu[end] -->\n};
 

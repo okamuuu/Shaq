@@ -38,7 +38,7 @@ subtest "render with template file" => sub {
     my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
     
     diag('wrapper_file is $Bin/../tmpl/base.mt');
-    my $content = $mt->render_file( 'name.mt', {name=>'okamura'} );
+    my $content = $mt->render_file( 'name.mt', {name=>'Mike'} );
 
     eq_or_diff $content, <<"_EOF_";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -49,7 +49,8 @@ subtest "render with template file" => sub {
 </head>
 <body>
     <div id="content">
-        <? block content => sub {} ?>
+            Hi, Mike.
+
     </div>
 </body>
 </html>
