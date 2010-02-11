@@ -65,7 +65,7 @@ _EOF_
 };
 
 
-subtest "use macro 'uri_escape'" => sub {
+subtest "use macro 'uri'" => sub {
 
     $mt = Shaq::Unit::MT->new;
     

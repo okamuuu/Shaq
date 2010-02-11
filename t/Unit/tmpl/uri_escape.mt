@@ -1,2 +1,2 @@
 <%= $uri %>
-<%= uri_escape($uri) %>
+<%= uri($uri) %>
