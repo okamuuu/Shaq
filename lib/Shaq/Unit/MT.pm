@@ -50,7 +50,7 @@ sub tmpl_file { $_[0]->{_tmpl_file} }
 sub stash     { $_[0]->{_stash} }
 sub mt        { $_[0]->{_mt} }
 
-sub render {
+sub render_file {
     my ($self, $template, $stash ) = @_;
 
     $template ||= $self->tmpl_file;
@@ -58,7 +58,7 @@ sub render {
     
     $self->mt->template_args( $stash );
 
-    my $mt_encoded_stirng = $self->mt->render( $template ); 
+    my $mt_encoded_stirng = $self->mt->render_file( $template ); 
     $mt_encoded_stirng->as_string;
 }
 
@@ -66,6 +66,7 @@ sub _path_to {
     my (@path) = @_;
     my $path = dir( _home_dir(), @path );
 
+    ### XXX: なにしたかったんだっけ？
     return $path if $path->is_dir;
     return file( _home_dir(), @path );
 }

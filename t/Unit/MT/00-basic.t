@@ -3,31 +3,42 @@ use strict;
 use warnings;
 use Test::More;
 use Test::Differences;
+use FindBin qw($Bin);
+use Path::Class qw/dir file/;
+use lib dir($Bin, '..', 'lib')->stringify;
 
 use_ok( 'Shaq::Unit::MT' );
 
-my $mt;
+my $home_dir = dir( $Bin, '..', '..', '..' );
+
+my $config = {
+    unit => {
+        mt => {
+            tmpl_dir => dir( $home_dir, 't', 'Unit', 'MT', 'tmpl' )->stringify,
+        },
+    },
+};
 
 subtest "create unit MT " => sub {
 
-    $mt = Shaq::Unit::MT->new;
+    my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
 
     isa_ok( $mt, "Shaq::Unit::MT", "object isa Shaq::Unit::MT" );
     can_ok( $mt, 'tmpl_file');
     can_ok( $mt, 'stash');
     can_ok( $mt, 'mt');
-    can_ok( $mt, 'render');
+    can_ok( $mt, 'render_file');
 
     done_testing;
 
 };
 
-subtest "create unit MT with no arugument " => sub {
+subtest "render with template file" => sub {
 
-    $mt = Shaq::Unit::MT->new;
+    my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
     
     diag('wrapper_file is $Bin/../tmpl/base.mt');
-    my $content = $mt->render( 'name.mt', {name=>'okamura'} );
+    my $content = $mt->render_file( 'name.mt', {name=>'okamura'} );
 
     eq_or_diff $content, <<"_EOF_";
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -50,9 +61,9 @@ _EOF_
 
 subtest "use macro 'raw_string', 'html_unescape'" => sub {
 
-    $mt = Shaq::Unit::MT->new;
+    my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
     
-    my $content = $mt->render( 'raw_string.mt', { xhtml =>'<p>test</p>', encoded => "&lt;p&gt;test&lt;/p&gt;" } );
+    my $content = $mt->render_file( 'raw_string.mt', { xhtml =>'<p>test</p>', encoded => "&lt;p&gt;test&lt;/p&gt;" } );
 
     eq_or_diff $content, <<"_EOF_";
 &lt;p&gt;test&lt;/p&gt;
@@ -64,13 +75,12 @@ _EOF_
 
 };
 
-
 subtest "use macro 'uri'" => sub {
 
-    $mt = Shaq::Unit::MT->new;
+    my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
     
     diag('SEE ALSO RFC 2396 and updated by RFC 2732');
-    my $content = $mt->render( 'uri_escape.mt', { uri => "http://search.yahoo.co.jp/search?p=東京" } );
+    my $content = $mt->render_file( 'uri_escape.mt', { uri => "http://search.yahoo.co.jp/search?p=東京" } );
 
     eq_or_diff $content, <<"_EOF_";
 http://search.yahoo.co.jp/search?p=東京
