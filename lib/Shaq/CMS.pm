@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use FindBin qw($Bin);
 use Path::Class qw/dir file/;
+use Archive::Zip;
+use DateTime;
 use Shaq::CMS::Menu;
 use Shaq::CMS::Site;
 
@@ -12,12 +14,13 @@ sub new {
     my $name     = $arg{name};
     my $doc_dir  = $arg{doc_dir};
     my $root_dir = $arg{root_dir};
+    my $backup_dir = $arg{backup_dir};
     my $parser   = $arg{parser};
 
     ### これだけ多いとParams::Validator使いたいなぁ
     Carp::croak("Please set param 'name' ...") unless $name;
 
-    for my $dir ( ($doc_dir, $root_dir) ) {
+    for my $dir ( $doc_dir, $root_dir, $backup_dir ) {
         Carp::croak("$dir is not 'Path::Class::Dir' ...")
             unless $dir->isa('Path::Class::Dir');
     }
@@ -30,20 +33,45 @@ sub new {
         _site     => undef,
         _doc_dir  => $doc_dir,
         _root_dir => $root_dir,
+        _backup_dir => $backup_dir,
         _parser   => $parser,
     }, $class;
 
 }
 
-sub name      { $_[0]->{_name}     }
-sub site      { $_[0]->{_site}     }
-sub doc_dir   { $_[0]->{_doc_dir}  }
-sub root_dir  { $_[0]->{_root_dir} }
-sub parser    { $_[0]->{_parser}   }
+sub name        { $_[0]->{_name}       }
+sub site        { $_[0]->{_site}       }
+sub doc_dir     { $_[0]->{_doc_dir}    }
+sub root_dir    { $_[0]->{_root_dir}   }
+sub backup_dir  { $_[0]->{_backup_dir} }
+sub parser      { $_[0]->{_parser}     }
 
 sub watch_file_change {}
 sub get_archives { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } # deref
 sub get_menus    { map { $_[0]->dir2menu($_)     } $_[0]->doc_dir->children; } # deref
+
+sub backup {
+    my ($self) = @_;
+
+    my $zip = Archive::Zip->new;
+    my $dt = DateTime->now( time_zone => 'local' );
+
+    my $filename =
+      file( $self->backup_dir, "backup_" . $dt->ymd('') . ".zip" )->stringify;
+
+    $zip->addTree( $self->doc_dir );
+    $zip->writeToFileNamed($filename);
+}
+
+sub upload {
+    my ($self) = @_;
+
+    my $zip = Archive::Zip->new;
+    my $dt = DateTime->now( time_zone => 'local' );
+
+
+}
+
 
 sub doc2site {
     my ( $self ) = @_;
@@ -124,7 +152,7 @@ sub file2archive {
                           $
                        /x;
 
-warn    my $basename = ( $1 eq 'index' ) ? 'index' : $dir_num . "-" . $1;
+    my $basename = ( $1 eq 'index' ) ? 'index' : $dir_num . "-" . $1;
     $self->parser->parse( basename => $basename, text => scalar $file->slurp ) or undef;
 }
 

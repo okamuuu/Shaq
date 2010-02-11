@@ -43,41 +43,6 @@ sub pages {
       @{ $self->archives };
 }
 
-=pod
-sub write_to {
-    my ( $self, $root_dir ) = @_;
-
-    my $tt = Template->new( ABSOLUTE => 1 );
-
-    for my $archive ( @{ $self->archives } ) {
-
-        my $vars = {
-            name     => $self->name,
-            title    => $archive->title,
-            keywords => join ', ',
-            $archive->keywords,
-            description => $archive->description,
-            menus       => $self->menus,
-            content     => $archive->content,
-        };
-
-        my $layout = $self->layout;
-
-        my $target_file;
-        if ( $archive->basename eq 'index' ) {
-            $target_file = "index.html";
-        }
-        else {
-            $target_file = $archive->base . ".html";
-        }
-
-        my $out_file = file( $root_dir, $target_file )->stringify;
-
-        $tt->process( $layout, $vars, $out_file )
-          or die $tt->error;
-    }
-}
-
 sub backup {
     my ( $self ) = @_;
 
