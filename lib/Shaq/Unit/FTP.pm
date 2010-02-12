@@ -1,8 +1,6 @@
 package Shaq::Unit::FTP;
 use strict;
 use warnings;
-use Path::Class qw/dir file/;
-use FindBin qw($Bin);
 use Net::FTP;
 
 sub new {
