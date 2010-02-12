@@ -53,6 +53,7 @@ sub upload {
       or die "Cannot change working directory ", $ftp->message;
 
     for my $child ( $local_dir->children ) {
+        next if $child->is_dir;
         $ftp->put( $child->stringify, $child->basename );
     }
 
