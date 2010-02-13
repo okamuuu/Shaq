@@ -27,7 +27,6 @@ subtest "prepate" => sub {
         root_dir    => dir( $Bin, '..', '..', "t/CMS/samples/root" ),
         backup_dir  => dir( $Bin, '..', '..', "t/CMS/samples/backup" ),
         upload_dir  => '/',
-        layout_file => file( $Bin, '..', '..', "t/CMS/samples/layout.tt2"),
         parser      => Shaq::CMS::ArchiveParser::Trac->new,
     );
  

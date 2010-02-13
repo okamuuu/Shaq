@@ -25,7 +25,7 @@ sub password   { $_[0]->{_password} }
 
 sub upload {
     my ( $self, $local_dir, $remote_dir ) = @_;
- 
+
     Carp::croak("the client_dir must be Path::Class::Dir.")
       unless $local_dir->isa('Path::Class::Dir');
   

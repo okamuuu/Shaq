@@ -17,7 +17,6 @@ sub new {
     my $backup_dir = $arg{backup_dir};
     my $parser   = $arg{parser};
 
-    ### これだけ多いとParams::Validator使いたいなぁ
     Carp::croak("Please set param 'name' ...") unless $name;
 
     for my $dir ( $doc_dir, $root_dir, $backup_dir ) {
@@ -46,9 +45,11 @@ sub root_dir    { $_[0]->{_root_dir}   }
 sub backup_dir  { $_[0]->{_backup_dir} }
 sub parser      { $_[0]->{_parser}     }
 
-sub watch_file_change {}
-sub get_archives { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } # deref
-sub get_menus    { map { $_[0]->dir2menu($_)     } $_[0]->doc_dir->children; } # deref
+sub get_categories { map { $_[0]->dir2categories($_) } $_[0]->doc_dir->children; }
+sub get_archives   { map { $_[0]->dir2archives($_) }   $_[0]->doc_dir->children; } 
+sub get_menus      { map { $_[0]->dir2menu($_) }       $_[0]->doc_dir->children; }
+
+sub get_catnames { map { $_->basename } $_[0]->doc_dir->children; }
 
 sub backup {
     my ($self) = @_;
@@ -62,16 +63,6 @@ sub backup {
     $zip->addTree( $self->doc_dir );
     $zip->writeToFileNamed($filename);
 }
-
-sub upload {
-    my ($self) = @_;
-
-    my $zip = Archive::Zip->new;
-    my $dt = DateTime->now( time_zone => 'local' );
-
-
-}
-
 
 sub doc2site {
     my ( $self ) = @_;
