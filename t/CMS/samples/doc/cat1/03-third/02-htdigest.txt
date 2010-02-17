@@ -1,0 +1,53 @@
+= 認証ページ作成 =
+
+'''''httpでの認証方式にはBasic認証とhtdigest認証があります。[[BR]]当サイトではセキュリティの強いhtdigest認証を利用した認証ページ作成方法を紹介します。'''''
+
+== 認証ページの作成 ==
+
+thisistest
+
+{{{
+% sudo htdigest -c /etc/httpd/.test.htdigest test_realm test_user
+Adding password for test_user in realm test_realm.
+New password:
+Re-type new password:
+}}}
+
+
+先ほど作成した設定ファイルをapacheが使用できるようにします。
+
+{{{
+% sudo chown apache:apache /etc/httpd/.test.htdigest
+% sudo chmod 400 /etc/httpd/.test.htdigest
+}}}
+
+httpd.confに設定を追加
+
+{{{
+% sudo vi /etc/httpd/conf/httpd.conf
+}}}
+
+{{{
+<VirtualHost *:80>
+    ServerName test.example.com
+    DocumentRoot /home/homepage/Prj/TEST/root
+    CustomLog "| /usr/sbin/rotatelogs /home/homepage/Prj/TEST/logs/test_access_log.%Y%m%d 86400 540" combined env=!static_files
+    ErrorLog  "| /usr/sbin/rotatelogs /home/homepage/Prj/TEST/logs/test_error_log.%Y%m%d 86400 540"
+
+    # ここから追加
+    <LocationMatch '/'>
+        AuthType Digest
+        AuthName test_realm
+        AuthUserFile /etc/httpd/.test.htdigest
+        Require valid-user
+    </LocationMatch>
+</VirtualHost>
+}}}
+
+Apacheを再起動
+
+{{{
+% sudo /sbin/service httpd restart
+}}}
+
+実際にURLを叩いて認証が有効になっている事を確認します。

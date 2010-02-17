@@ -1,0 +1,182 @@
+= OpenSSH設定 =
+
+'''''WEBサーバーを公開直後はセキュリティ対策が全く施されていない為、全く無防備な状態です。[[BR]]最初に最低限必要なセキュリティ対策を行います。'''''
+
+== SSHアクセス元の規制 ==
+
+この時点ではSSHポートに対して誰でもアクセスできる状態です。最初に自分が使用しているISP以外からはアクセスできないように規制します。
+
+
+過去のログインユーザー一覧情報を表示して、自身が利用しているISPを確認します。
+{{{
+# last -a
+}}}
+
+ここでは xx123-45-658-151.xxx.example.ne.jpと表示されていたと仮定します。
+
+ログインしたユーザー名のホスト名が表示されます。次に/etc/hosts.denyを編集します。なお、Linodeで提供されているCentOS5.3はデフォルトではviが使えないので変わりにvimコマンド使用します。
+
+/etc/hosts.denyを編集します。
+
+{{{
+# vim /etc/hosts.deny
+}}}
+
+次の行を追記します。
+
+{{{
+All: All
+}}}
+
+/etc/hosts.allowを編集します
+
+{{{
+# vim /etc/hosts.allow
+}}}
+
+次の行を追記します。
+
+{{{
+SSHD: All .example.ne.jp
+}}}
+
+ひとまずあなたが契約しているISP経由でないと''SSH接続''ができないようになりました。
+
+== 一般ユーザー作成 ==
+
+一般ユーザーhomepageを作成し、パスワードを設定します。
+
+{{{
+# useradd homepage
+# passwd homepage
+Changing password for user homepage.
+New UNIX password:
+Retype new UNIX password:
+passwd: all authentication tokens updated successfully.
+}}}
+
+== 認証方式を変更 ==
+
+sshの設定ファイルを編集し、認証方式を次のように変更します。
+
+ * rootユーザーでのリモートログインを禁止する。
+ * 鍵認証でのログインに切り替える。
+ * 空パスワードを禁止
+
+{{{
+# vim /etc/ssh/sshd_config
+}}}
+
+以下の項目を次の様に設定します。PasswordAuthenticationは最初にWinSCPで秘密鍵の転送を
+行う必要があるため最初は無効にします。
+
+{{{
+PermitRootLogin no
+#PasswordAuthentication no
+PermitEmptyPasswords no
+}}}
+
+sshdを再起動します。
+
+{{{
+# /sbin/service sshd restart
+}}}
+
+一般ユーザーに変更
+一般ユーザーのホームディレクトリに個別ユーザー用の設定ディレクトリを設置します。
+
+{{{
+# su homepage
+$ mkdir ~/.ssh
+}}}
+
+鍵作成 
+
+{{{
+$ cd ~/.ssh
+$ ssh-keygen -t dsa
+...
+}}}
+
+公開鍵を authorized_keys へ追加
+
+{{{
+$ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+$ chmod 600 ~/.ssh/authorized_keys
+}}}
+
+作成した秘密鍵をWinSCPなどでダウンロードします。
+秘密鍵はこのファイルです。
+
+{{{
+ ~/.ssh/id_dsa
+}}}
+
+ここで作成された秘密鍵はid_dsaはローカルで保存しておけばよいので削除しておきます。
+
+{{{
+$ rm  ~/.ssh/id_dsa
+}}}
+
+Putty-Genで読み込み、Puttyでも利用できる形式に変換します。
+
+
+この結果できた秘密鍵と公開鍵を使用しないと将来的に踏み台サーバー
+を設置する際などに鍵の形式が合わない事による不都合が生じるかもしれません。
+
+なお、今回の手順はセキュリティ的に問題があるのかもしれませんが、手軽に
+SSHの設定をする一つの手段として紹介しております。この手順で不都合が生じた場合があったとしても、当方は一切関知しません。
+
+公開鍵を配置し、パーミッションを変更する。
+
+{{{
+$ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+$ chmod 700 ~/.ssh
+$ chmod 600 ~/.ssh/authorized_keys
+}}}
+
+公開鍵もこの時点で必要はないので削除します。
+
+{{{
+$ rm ~/.ssh/id_dsa.pub
+}}}
+
+認証方式をパスワード方式から鍵方式へ変更します。
+
+{{{
+$ su
+# vim /etc/ssh/sshd_config
+}}}
+
+{{{
+PasswordAuthentication no
+}}}
+
+再起動
+
+{{{
+# /sbin/service sshd restart
+}}}
+
+
+== 確認 ==
+
+ログを監視
+
+{{{
+# tail -f /var/log/secure
+}}}
+
+この状態でroot権限でログインできない事を確認します。次のようなログが表示され、ログインに失敗する事を確認します。
+
+{{{
+No supported authentication methods available
+}}}
+
+次に一般ユーザーで鍵認証方式でログインできているかを確認します。次のようなログが表示されている事を確認して下さい。
+
+{{{
+Accepted publickey for homepage from xxx.xxx.xxx.xxx port 
+}}}
+
+

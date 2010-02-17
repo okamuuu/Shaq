@@ -9,10 +9,10 @@ use Shaq::CMS::ArchiveParser::Trac;
 my $parser = Shaq::CMS::ArchiveParser->new( parser => Shaq::CMS::ArchiveParser::Trac->new );
 
 sub test_method {
-    my $archive = $parser->parse( id => 'filename', text => $_[0] );
+    my $archive = $parser->parse( basename => 'filename', text => $_[0] );
 
     my $result = {
-        id          => $archive->id,
+        basename    => $archive->basename,
         title       => $archive->title,
         keywords    => $archive->keywords,
         description => $archive->description,
@@ -27,6 +27,38 @@ filters {
 
 run_is_deeply 'i' => 'e';
 
+=pod yamlでundef返す方法が分からないという
+
+=== # descriptionが存在しない
+--- i
+= head1 =
+
+''test''です。''em''は''強調''です。
+
+== heading2 ==
+--- e
+basename: filename
+title: head1
+keywords: 
+  - test
+  - em
+  - 強調
+description: 
+
+=== # keywordsが存在しない
+--- i
+= head1 =
+
+
+== heading2 ==
+--- e
+basename: filename
+title: head1
+keywords: []
+description: 
+
+=cut
+
 __END__
 
 === # description keywordsが存在する
@@ -40,41 +72,13 @@ __END__
 ''test''です!!''test''です!!''em''は''強調''です。
 
 --- e
-id: filename
+basename: filename
 title: test見出し1
 keywords: 
   - test
   - em
   - 強調
 description: 概要はdescriptionとして認識
-
-=== # descriptionが存在しない
---- i
-= head1 =
-
-''test''です。''em''は''強調''です。
-
-== heading2 ==
---- e
-id: filename
-title: head1
-keywords: 
-  - test
-  - em
-  - 強調
-description: ''
-
-=== # keywordsが存在しない
---- i
-= head1 =
-
-
-== heading2 ==
---- e
-id: filename
-title: head1
-keywords: []
-description: ''
 
 
 

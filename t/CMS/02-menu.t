@@ -38,12 +38,12 @@ subtest "add list" => sub {
 
 subtest "add archive again" => sub {
 
-    $menu->add_list( {basename=>'about', title => 'about title' } );
+    $menu->add_list( {basename=>'01-about', title => 'about title' } );
      
     is_deeply $menu->get_list,
     [
         { basename => 'index', title => 'index title' },
-        { basename => 'about', title => 'about title' },
+        { basename => '01-about', title => 'about title' },
     ];
 
     done_testing();
