@@ -11,12 +11,12 @@ use Shaq::CMS::Menu;
 
 sub new {
     my ( $class, %arg ) = @_;
-   
-    my $name     = $arg{name};
-    my $doc_dir  = $arg{doc_dir};
-    my $root_dir = $arg{root_dir};
+
+    my $name       = $arg{name};
+    my $doc_dir    = $arg{doc_dir};
+    my $root_dir   = $arg{root_dir};
     my $backup_dir = $arg{backup_dir};
-    my $parser   = $arg{parser};
+    my $parser     = $arg{parser};
 
     Carp::croak("Please set param 'name' ...") unless $name;
 

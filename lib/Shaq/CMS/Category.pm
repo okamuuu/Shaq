@@ -5,30 +5,23 @@ use MouseX::AttributeHelpers;
 has name => (
     is       => 'ro',
     isa      => 'Str',
-#    required => 1
+    required => 1
 );
 
 has dirname => ( is => 'ro', isa => 'Str', required => 1 );
 
 has archives  => ( 
     metaclass => 'Collection::Array',
-    is => 'rw', 
+    is => 'ro', 
     isa => 'ArrayRef[Shaq::CMS::Archive]', 
-    default => sub {[]},
-    provides => {
-        push => 'add_archives',
-    },
     auto_deref => 1,
 );
 
 has menus   => ( 
     metaclass => 'Collection::Array',
-    is => 'rw', 
+    is => 'ro', 
     isa => 'ArrayRef[Shaq::CMS::Menu]', 
-    default => sub {[]},
-    provides => {
-        push => 'add_menus',
-    },
+#    auto_deref => 1,
 );
 
 __PACKAGE__->meta->make_immutable;
