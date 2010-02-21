@@ -19,7 +19,7 @@ sub new {
     my $parser     = $arg{parser};
 
     Carp::croak("Please set param 'name' ...") unless $name;
-
+    
     for my $dir ( $doc_dir, $root_dir, $backup_dir ) {
         Carp::croak("$dir is not 'Path::Class::Dir' ...")
             unless $dir->isa('Path::Class::Dir');
@@ -43,9 +43,9 @@ sub root_dir    { $_[0]->{_root_dir}   }
 sub backup_dir  { $_[0]->{_backup_dir} }
 sub parser      { $_[0]->{_parser}     }
 
-sub get_categories { map { $_[0]->dir2category($_) } $_[0]->doc_dir->children; }
-sub get_archives   { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } 
-sub get_menus      { map { $_[0]->dir2menu($_) }     $_[0]->doc_dir->children; }
+#sub get_categories { map { $_[0]->dir2category($_) } $_[0]->doc_dir->children; }
+#sub get_archives   { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } 
+#sub get_menus      { map { $_[0]->dir2menu($_) }     $_[0]->doc_dir->children; }
 
 sub doc2site {
     my ($self) = @_;
@@ -69,7 +69,7 @@ sub backup {
     $zip->addTree( $self->doc_dir );
     $zip->writeToFileNamed($filename);
 }
-
+     
 sub dir2category {
     my ( $self, $cat_dir ) = @_;
 
@@ -92,6 +92,7 @@ sub dir2category {
     }
 
     my $category = Shaq::CMS::Category->new(
+        name     => $dirname, # FIXME: どうやって設定するか考える <- ハイフンで区切る？
         dirname  => $dirname,
         menus    => [@menus],
         archives => [@all_archives]
