@@ -3,11 +3,11 @@ use strict;
 use warnings;
 
 sub new {
-    my ($class) = @_;
+    my ($class, $config) = @_;
 
     my $self = bless {
-        _categories => [],
-        _base_url => '',
+        _categories => $config->{categories} || [],
+        _base_url => $config->{base_url} || '',
         _current  => '',
     }, $class;
 }

@@ -5,35 +5,41 @@ use FindBin qw($Bin);
 use Path::Class qw/dir file/;
 use Archive::Zip;
 use DateTime;
+use UNIVERSAL::require;
 use Shaq::CMS::Site;
 use Shaq::CMS::Category;
 use Shaq::CMS::Menu;
 
 sub new {
-    my ( $class, %arg ) = @_;
+    my ( $class, $config ) = @_;
 
-    my $name       = $arg{name};
-    my $doc_dir    = $arg{doc_dir};
-    my $root_dir   = $arg{root_dir};
-    my $backup_dir = $arg{backup_dir};
-    my $parser     = $arg{parser};
+    my $name       = $config->{name};
+    my $doc_dir    = $config->{doc_dir} || dir( $Bin, '..', 'doc' );
+    my $root_dir   = $config->{root_dir} || dir( $Bin, '..', 'root' );
+    my $backup_dir = $config->{backup_dir} || dir( $Bin, '..', 'backup' );
+    my $parser     = $config->{parser};
 
     Carp::croak("Please set param 'name' ...") unless $name;
-    
+
     for my $dir ( $doc_dir, $root_dir, $backup_dir ) {
         Carp::croak("$dir is not 'Path::Class::Dir' ...")
-            unless $dir->isa('Path::Class::Dir');
+          unless $dir->isa('Path::Class::Dir');
     }
 
-    Carp::croak("$parser couldn't does 'parse' ...")
-      unless $parser->can('parse');
+    
+    my $parser_module = "Shaq::CMS::ArchiveParser::" . $parser;
+
+    $parser_module->use or die $@;
+
+    Carp::croak("$parser_module couldn't does 'parse' ...")
+      unless $parser_module->can('parse');
 
     bless {
-        _name     => $name,
-        _doc_dir  => $doc_dir,
-        _root_dir => $root_dir,
+        _name       => $name,
+        _doc_dir    => $doc_dir,
+        _root_dir   => $root_dir,
         _backup_dir => $backup_dir,
-        _parser   => $parser,
+        _parser     => $parser_module->new,
     }, $class;
 }
 
@@ -42,10 +48,6 @@ sub doc_dir     { $_[0]->{_doc_dir}    }
 sub root_dir    { $_[0]->{_root_dir}   }
 sub backup_dir  { $_[0]->{_backup_dir} }
 sub parser      { $_[0]->{_parser}     }
-
-#sub get_categories { map { $_[0]->dir2category($_) } $_[0]->doc_dir->children; }
-#sub get_archives   { map { $_[0]->dir2archives($_) } $_[0]->doc_dir->children; } 
-#sub get_menus      { map { $_[0]->dir2menu($_) }     $_[0]->doc_dir->children; }
 
 sub doc2site {
     my ($self) = @_;
