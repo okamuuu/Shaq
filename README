@@ -2,11 +2,11 @@ NAME
     Shaq
 
 SYNOPSIS
-    use Shaq::Api::DBIC;
-    use Shaq::Api::TT;
+    use Shaq::Unit::Config;
+    use Shaq::Unit::WebService::MT;
 
-    my $dbic = Shaq::Api::DBIC->new;
-    my $tt   = Shaq::Api::TT->new;
+    my $config = Shaq::Unit::Config->instance();
+    my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
 
 WARNINGS
     This is my personal, toy and experimental my project.
@@ -14,7 +14,7 @@ WARNINGS
 
 COPYRIGHT AND LICENCE
 
-Copyright (C) 2009 okamura
+Copyright (C) 2010 okamura
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
