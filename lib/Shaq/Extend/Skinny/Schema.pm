@@ -1,37 +1,52 @@
 package Shaq::Extend::Skinny::Schema;
 use strict;
 use warnings;
+use utf8;
 use DateTime;
 use DateTime::Format::Strptime;
 use DateTime::Format::MySQL;
 use DateTime::TimeZone; 
 use String::Random;
+use JSON::XS;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 sub import {
     
     my $schema = caller;
     
     #-----------------------------------------------------------
-    # rid 
+    # to rid 
     #-----------------------------------------------------------
     push @{ $schema->common_triggers->{pre_insert} }, sub {
         my ( $self, $args, $table ) = @_;
         my ($column) = grep { $_ eq 'rid' } $schema->schema_info->{$table}->{columns};
         $args->{rid} ||= String::Random->new->randregex('[A-Za-z0-9]{10}'); 
     };
-   
+ 
     #-----------------------------------------------------------
-    # DateTime
+    # serialize
     #-----------------------------------------------------------
-    my $timezone = DateTime::TimeZone->new( name => 'local' );
+    for my $rule (qw(^.+_data$)) {
+        $schema->inflate_rules->{$rule}->{inflate} = sub {
+            my $value = shift or return;
+            decode_json $value;
+        };
+        $schema->inflate_rules->{$rule}->{deflate} = sub {
+            my $value = shift or return;
+            encode_json $value;
+        };
+    }
+ 
+    #-----------------------------------------------------------
+    # inflate DateTime
+    #-----------------------------------------------------------
+    my $timezone = DateTime::TimeZone->new( name => 'Asia/Tokyo' );
 
-    ### DateTimeオブジェクトとして使う
     for my $rule (qw(^.+_at$ ^.+_on$)) {
         $schema->inflate_rules->{$rule}->{inflate} = sub {
             my $value = shift or return;
-            return $value if ref $value eq 'DateTime';
+            return $value if ref $value eq 'DateTime'; # !? そんなばかな !?
             my $dt = DateTime::Format::Strptime->new(
                 pattern   => '%Y-%m-%d %H:%M:%S',
                 time_zone => $timezone,
