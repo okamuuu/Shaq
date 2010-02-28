@@ -6,7 +6,7 @@ use Test::More;
 use t::Extend::Skinny::Mock::SQLite;
 use t::Extend::Skinny::Mock::DB;
 
-subtest "serialize" => sub {
+subtest "deserialize and serialize json " => sub {
 
     my $book = t::Extend::Skinny::Mock::DB->single('books', {id=>1});
     is_deeply( $book->json_data, {width=>80, height=>100} );
@@ -17,5 +17,15 @@ subtest "serialize" => sub {
     done_testing;
 
 };
+
+subtest "create Thumbnail object" => sub {
+
+    my $book = t::Extend::Skinny::Mock::DB->single('books', {id=>1});
+    isa_ok( $book->thumbnail, "Shaq::Model::Thumbnail");
+
+    done_testing;
+
+};
+
 
 done_testing;

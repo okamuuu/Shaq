@@ -11,7 +11,7 @@ use Shaq::Extend::Skinny::Schema;
  
 install_table books => schema {
     pk 'id';
-    columns qw/id author_id json_data name published_at created_at updated_at/;
+    columns qw/id author_id json_data thumbnail name published_at created_at updated_at/;
 };
  
 install_table authors => schema {

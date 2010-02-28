@@ -1,4 +1,4 @@
-package Shaq::UI::Thumbnail;
+package Shaq::Model::Thumbnail;
 use strict;
 use warnings;
 
@@ -29,13 +29,24 @@ sub xhtml {
     my $xhtml = qq{<img src="$src" alt="$alt" width="$width" height="$height" />};
 }
 
+sub to_json {
+    my ($self) = @_;
+
+    my $src    = $self->src;
+    my $alt    = $self->alt;
+    my $width  = $self->width;
+    my $height = $self->height;
+
+    return qq/{"src":"$src", "alt":"$alt", "width":"$width", "height":"$height"}/;
+}
+
 1;
 
 __END__
 
 =head1 NAME
 
-Shaq::UI::Thumbnail - UI
+Shaq::Model::Thumbnail - Model
 
 =head1 METHODS
 

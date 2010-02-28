@@ -2,12 +2,15 @@ package Shaq::Extend::Skinny::Schema;
 use strict;
 use warnings;
 use utf8;
+use UNIVERSAL::require;
 use DateTime;
 use DateTime::Format::Strptime;
 use DateTime::Format::MySQL;
 use DateTime::TimeZone; 
 use String::Random;
 use JSON::XS;
+
+#use Shaq::Model::Thumbnail;
 
 our $VERSION = '0.03';
 
@@ -37,7 +40,23 @@ sub import {
             encode_json $value;
         };
     }
- 
+  
+    #-----------------------------------------------------------
+    # inflate Thumbnail Model
+    #-----------------------------------------------------------
+=pod 各プロジェクト毎でSchemaに記述すべきかも
+    for my $rule (qw(thumbnail$)) {
+        $schema->inflate_rules->{$rule}->{inflate} = sub {
+            my $json = shift or return;
+            my $hashref = decode_json $json;
+            my $model = Shaq::Model::Thumbnail->new($hashref); 
+        };
+        $schema->inflate_rules->{$rule}->{deflate} = sub {
+            my $model = shift;
+            $model->to_json;
+        };
+    }
+=cut
     #-----------------------------------------------------------
     # inflate DateTime
     #-----------------------------------------------------------
