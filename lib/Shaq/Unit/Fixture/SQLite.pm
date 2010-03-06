@@ -1,10 +1,12 @@
 package Shaq::Unit::Fixture::SQLite;
 use strict;
 use warnings;
+use utf8;
 use base 'Exporter';
 our $VERSION = '0.01';
 use Cwd;
 use DBI;
+use JSON::XS;
 use Config::Multi;
 use SQL::Abstract;
 use Path::Class qw/dir file/;
@@ -52,15 +54,22 @@ sub setup {
 sub _fixture2queries {
     my $fixture = shift;
 
-    my @queries; 
     my $sql = SQL::Abstract->new;
 
+    my @queries; 
     for my $table ( keys %$fixture ) {
         for my $record ( @{ $fixture->{$table} } ) {
-            my($stmt, @binds) = $sql->insert($table, $record);
+
+            for my $column ( keys %$record ) {
+
+                if ( $column =~ m/_data$/ ) {
+                    $record->{$column} = encode_json $record->{$column};
+                }
+            }
+            my ( $stmt, @binds ) = $sql->insert( $table, $record );
             push @queries, { stmt => $stmt, binds => [@binds] };
         }
-    }   
+    }
 
     return @queries;
 }

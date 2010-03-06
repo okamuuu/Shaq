@@ -10,6 +10,7 @@ updated_at TEXT
 CREATE TABLE authors (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 name TEXT,
+category_data TEXT,
 debuted_at TEXT,
 created_at TEXT,
 updated_at TEXT
