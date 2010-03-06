@@ -3,7 +3,7 @@ NAME
 
 SYNOPSIS
     use Shaq::Unit::Config;
-    use Shaq::Unit::WebService::MT;
+    use Shaq::Unit::MT;
 
     my $config = Shaq::Unit::Config->instance();
     my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});

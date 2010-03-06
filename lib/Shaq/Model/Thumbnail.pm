@@ -1,22 +1,18 @@
 package Shaq::Model::Thumbnail;
-use strict;
-use warnings;
+use Mouse;
 
-sub new {
-    my ( $class, %arg ) = @_;
+has src => ( is => 'rw' );
+has alt => ( is => 'rw' );
+has width => ( is => 'rw' );
+has height => ( is => 'rw' );
 
-    my $self = bless {
-        _src    => $arg{src},
-        _alt    => $arg{alt},
-        _width  => $arg{width},
-        _height => $arg{height},
-    }, $class;
+no Mouse;
+
+sub BUILDARGS {
+    my ( $self, $args ) = @_;
+    return $args;
 }
 
-sub src    { $_[0]->{_src} }
-sub alt    { $_[0]->{_alt} }
-sub width  { $_[0]->{_width} }
-sub height { $_[0]->{_height} }
 
 sub xhtml {
     my ($self) = @_;
@@ -40,7 +36,7 @@ sub to_json {
     return qq/{"src":"$src", "alt":"$alt", "width":"$width", "height":"$height"}/;
 }
 
-1;
+__PACKAGE__->meta->make_immutable;
 
 __END__
 

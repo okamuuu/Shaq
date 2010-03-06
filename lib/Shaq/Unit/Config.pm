@@ -2,7 +2,7 @@ package Shaq::Unit::Config;
 use strict;
 use warnings;
 use base 'Class::Singleton';
-use FindBin qw($Bin);
+use Cwd;
 use Path::Class::Dir;
 use Path::Class::File;
 use Config::Multi;
@@ -12,12 +12,12 @@ our $FILES;
 sub _new_instance {
     my ( $class, %arg ) = @_;
 
-    my $conf_dir  = $arg{conf_dir}  || 'conf';
+    my $conf_dir  = $arg{conf_dir}  || path_to('conf')->stringify;
     my $app_name  = $arg{app_name}  || 'myapp';
     my $extension = $arg{extension} || 'yml';
 
     my $cm = Config::Multi->new({
-        dir => path_to( $conf_dir )->stringify,
+        dir         => $conf_dir,
         app_name    => $app_name,
         extension   => $extension,
     });
@@ -29,7 +29,8 @@ sub _new_instance {
 
 sub files { return $FILES; }
 
-sub home { Path::Class::Dir->new( $Bin, '..' ); }
+#sub home { Path::Class::Dir->new( $Bin, '..' ); }
+sub home { Path::Class::Dir->new(  getcwd()  ); }
 
 sub path_to {
     my ( @path ) = @_;
