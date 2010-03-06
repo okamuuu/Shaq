@@ -13,7 +13,6 @@ sub BUILDARGS {
     return $args;
 }
 
-
 sub xhtml {
     my ($self) = @_;
 

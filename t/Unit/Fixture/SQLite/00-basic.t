@@ -10,12 +10,12 @@ use lib dir($Bin, '..', 'lib')->stringify;
 use Shaq::Unit::Fixture::SQLite;
 
 $Shaq::Unit::Fixture::SQLite::DB_FILE=file( $Bin,  '..', 'db', '_test.db' );
-$Shaq::Unit::Fixture::SQLite::SQL_FILE=file( $Bin,  '..', 'db', 'create.sql' );
+$Shaq::Unit::Fixture::SQLite::SQL_FILE=file( $Bin,  '..', 'db', 'schema.sql' );
 $Shaq::Unit::Fixture::SQLite::FIXTURE_DIR=dir( $Bin,  '..', 'db', 'fixture' );
  
 subtest "setup" => sub {
 
-    Shaq::Unit::Fixture::SQLite::setup;
+    Shaq::Unit::Fixture::SQLite->setup(json_columns=>[qw/category/]);
 
     isa_ok _dbh(), "DBI::db";
     

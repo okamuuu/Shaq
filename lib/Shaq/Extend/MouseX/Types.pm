@@ -19,7 +19,7 @@ subtype DateTime, as 'DateTime';
 
 coerce 'DateTime', from Str, via {
     my $dt = DateTime::Format::Strptime->new(
-        pattern   => '%Y-%m-%dT%H:%M:%S',
+        pattern   => '%Y-%m-%d %H:%M:%S',
         time_zone => 'Asia/Tokyo',
     )->parse_datetime($_);
     return 'DateTime'->from_object( object => $dt );

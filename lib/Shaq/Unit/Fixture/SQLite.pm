@@ -12,12 +12,16 @@ use SQL::Abstract;
 use Path::Class qw/dir file/;
 
 our $DB_FILE     = file( cwd(), 'db', '_test.db'   );
-our $SQL_FILE    = file( cwd(), 'db', 'create.sql' );
+our $SQL_FILE    = file( cwd(), 'db', 'schema.sql' );
 our $FIXTURE_DIR = dir(  cwd(), 'db', 'fixture'    );
 
+my %IS_JSON;
+
 sub setup {
-    my $class  = shift;
+    my ($class, %opt) = @_;
     my $caller = caller;
+
+    %IS_JSON = map { $_ => 1 } @{ $opt{json_columns} };
 
     ### XXX: t/Unit/Fixture/SQLite/00-basic.t .. DBD::SQLite::db do failed: not an error at /home/okamura/p5/Shaq/lib/Shaq/Unit/Fixture/SQLite.pm line 23.
     my $dbh = DBI->connect("dbi:SQLite:$DB_FILE", '', '');
@@ -62,7 +66,7 @@ sub _fixture2queries {
 
             for my $column ( keys %$record ) {
 
-                if ( $column =~ m/_data$/ ) {
+                if ( $IS_JSON{$column} ) {
                     $record->{$column} = encode_json $record->{$column};
                 }
             }
