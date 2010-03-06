@@ -1,0 +1,39 @@
+---
+books:
+  - id: 1
+    author_id: 1
+    name: 'neko_book1'
+    published_at: '2009-01-01T10:00:00'
+    created_at: '2009-01-01T10:00:00'
+    updated_at: '2009-01-01T10:00:00'
+ 
+  - id: 2
+    author_id: 1
+    name: 'neko_book2'
+    published_at: '2009-01-01T10:00:00'
+    created_at: '2009-01-01T10:00:00'
+    updated_at: '2009-01-01T10:00:00'
+  
+  - id: 3
+    author_id: 2
+    name: 'kan_book3'
+    published_at: '2009-01-01T10:00:00'
+    created_at: '2009-01-01T10:00:00'
+    updated_at: '2009-01-01T10:00:00'
+
+authors:
+  - id: 1
+    name: nekokak
+    created_at: '2009-01-01T10:00:00'
+    updated_at: '2009-01-01T10:00:00'
+    
+  - id: 2
+    name: kan
+    created_at: '2009-01-01T10:00:00'
+    updated_at: '2009-01-01T10:00:00'
+
+  - id: 3
+    name: walf443
+    created_at: '2009-01-01T10:00:00'
+    updated_at: '2009-01-01T10:00:00'
+
