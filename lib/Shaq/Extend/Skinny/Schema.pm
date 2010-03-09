@@ -23,8 +23,9 @@ sub import {
     #-----------------------------------------------------------
     push @{ $schema->common_triggers->{pre_insert} }, sub {
         my ( $self, $args, $table ) = @_;
-        my ($column) = grep { $_ eq 'rid' } $schema->schema_info->{$table}->{columns};
-        $args->{rid} ||= String::Random->new->randregex('[A-Za-z0-9]{10}'); 
+        if ( grep { /^rid$/ } @{$schema->schema_info->{$table}->{columns}}  ) {
+            $args->{rid} ||= String::Random->new->randregex('[A-Za-z0-9]{10}'); 
+        }
     };
  
     #-----------------------------------------------------------
