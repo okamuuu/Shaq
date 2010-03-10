@@ -26,9 +26,7 @@ sub new {
           unless $dir->isa('Path::Class::Dir');
     }
 
-    
     my $parser_module = "Shaq::CMS::ArchiveParser::" . $parser;
-
     $parser_module->use or die $@;
 
     Carp::croak("$parser_module couldn't does 'parse' ...")
@@ -80,11 +78,14 @@ sub dir2category {
 
     my ( @all_archives, @menus );
     for my $dir ( sort { $a cmp $b } $cat_dir->children ) {
+
+        ### _から始まるディレクトリはここで無視される
         my $menu = $self->dir2menu($dir) or next;
+
         my @archives = $self->dir2archives($dir);
 
+        ### 生成された記事を元にメニューを作る
         for my $archive (@archives) {
-
             $menu->add_list(
                 { basename => $archive->basename, title => $archive->title } );
         }
@@ -109,6 +110,9 @@ sub dir2menu {
 
     my @list = $dir->dir_list;
     my $dirname = $list[-1];
+   
+    ### 先頭にアンダースコアがあるディレクトリは下書きだよ
+    return if $dirname =~ m/^_/; 
     
     $dirname =~ m/
                     ^
@@ -147,7 +151,14 @@ sub file2archive {
     Carp::croak("the param must be Path::Class::File.")
       unless $file->isa('Path::Class::File');
 
-    $file->basename =~ m/^
+    
+    # 先頭にアンダースコアがある場合、そのファイルは下書きです
+    # ここでこの処理がないとこうなる??先頭に^つけてるんだけどなー??
+    # _03-mail_ssl.txt => 04-04.html 
+    return if $file->basename =~ m/^_/; 
+
+    $file->basename =~ m/
+                          ^
                           \d+               # 並び順
                           -                 # ハイフン
                           (\w*)             # ファイル名、-は指定できない仕様

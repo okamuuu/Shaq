@@ -1,4 +1,4 @@
-package Shaq::UI::Menu;
+package Shaq::Model::Menu;
 use strict;
 use warnings;
 use Carp;

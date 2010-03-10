@@ -1,5 +1,5 @@
 package Shaq::CMS::Menu;
-use Any::Moose;
+use Mouse;
 use MouseX::AttributeHelpers;
 
 has order => ( is => 'ro', isa => 'Str', default => sub { [] }, );
@@ -21,9 +21,7 @@ has basenames => (
     provides   => { push  => 'add_basenames' },
 );
 
-__PACKAGE__->meta->make_immutable;
-
-no Any::Moose;
+no Mouse;
 
 ### 必要になるまで極力呼ばない呼ばない
 sub get_list {
@@ -85,7 +83,7 @@ sub xhtml {
 
 }
 
-1;
+__PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 

@@ -1,5 +1,5 @@
 package Shaq::CMS::Site;
-use Any::Moose;
+use Mouse;
 use MouseX::AttributeHelpers;
 
 has name => (
@@ -19,14 +19,12 @@ has categories  => (
     auto_deref => 1,
 );
 
+no Mouse;
+
 __PACKAGE__->meta->make_immutable;
-
-no Any::Moose;
-
-1;
 
 =head1 NAME
 
-CMS::Lite::Site - framework class
+Shaq::CMS::Site - CMS
 
 

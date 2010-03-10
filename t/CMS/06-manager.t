@@ -9,14 +9,14 @@ use Shaq::CMS::ArchiveParser::Trac;
 
 subtest "create manager object" => sub {
 
-    my $site = Shaq::CMS::Manager->new(
+    my $site = Shaq::CMS::Manager->new({
         name        => 'Site Name',
         doc_dir     => dir( $Bin, '..', '..', "t/CMS/samples/doc" ),
         root_dir    => dir( $Bin, '..', '..', "t/CMS/samples/root" ),
         backup_dir  => dir( $Bin, '..', '..', "t/CMS/samples/backup" ),
         upload_dir  => '/',
-        parser      => Shaq::CMS::ArchiveParser::Trac->new,
-    );
+        parser      => 'Trac',
+    });
  
     isa_ok( $site, "Shaq::CMS::Manager", "object isa Shaq::CMS::Manager" );
 

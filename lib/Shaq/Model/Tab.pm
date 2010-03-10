@@ -47,7 +47,7 @@ __END__
 
 =head1 NAME
 
-Shaq::UI::Navigation::Tab - UI 
+Shaq::Model::Tab
 
 =head1 METHODS
 
