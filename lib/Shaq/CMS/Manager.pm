@@ -56,7 +56,7 @@ sub doc2site {
       map  { $self->dir2category($_) }
       sort { $a cmp $b } $self->doc_dir->children;
 
-    my $site = Shaq::CMS::Site->new( name => $self->name, categories => [@categories] );
+    Shaq::CMS::Site->new( name => $self->name, categories => [@categories] );
 }
 
 sub backup {
@@ -96,7 +96,7 @@ sub dir2category {
         push @menus,        $menu;
     }
 
-    my $category = Shaq::CMS::Category->new(
+    Shaq::CMS::Category->new(
         name     => $dirname, # FIXME: どうやって設定するか考える
         dirname  => $dirname,
         menus    => [@menus],
@@ -110,20 +110,14 @@ sub dir2menu {
     die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-#    my @list = $dir->dir_list;
-#    my $dirname = $list[-1];
-    my $dirname = $dir->dir_list(-1);
-   
-    ### 先頭にアンダースコアがあるディレクトリは下書きだよ
-    return if $dirname =~ m/^_/; 
-    
-    $dirname =~ m/
+    ### ディレクトリの最下層をパターンマッチ
+    $dir->dir_list(-1) =~ m/
                     ^
                     (\d+)
                     -
                     ([^-]*)   # 日本語OK
                     $
-                /x
+                /x 
     ? Shaq::CMS::Menu->new( order=> $1, name => $2 )
     : undef;
 }
@@ -134,19 +128,18 @@ sub dir2archives {
     die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-#    my @list = $dir->dir_list;
-#    my $dirname = $list[-1];
-    my $dirname = $dir->dir_list(-1);
- 
-    $dirname =~ m/
+    ### ディレクトリの最下層をパターンマッチ
+    $dir->dir_list(-1) =~ m/
                     ^
                     (\d+)
                     -
                     ([^-]*)   # 日本語OK
                     $
-                /x;
-   
-    grep { defined $_ } map { $self->file2archive($1, $_) } sort {"$a" cmp "$b"} $dir->children;
+                /x or return;
+
+    grep { defined $_ }
+      map { $self->file2archive( $1, $_ ) }
+      sort { "$a" cmp "$b" } $dir->children;
 }
 
 sub file2archive {
@@ -164,7 +157,7 @@ sub file2archive {
                           $
                        /x or return; ### matchしない場合は即座にリターン
 
-    my $basename = ( $1 eq 'index' ) ? 'index' : $dir_num . "-" . $1;
+    my $basename = $1 eq 'index' ? 'index' : $dir_num . "-" . $1;
     $self->parser->parse( basename => $basename, text => scalar $file->slurp ) or undef;
 }
 
