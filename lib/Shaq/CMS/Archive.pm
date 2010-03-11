@@ -20,6 +20,7 @@ sub keywords    { $_[0]->{_keywords} }
 sub description { $_[0]->{_description} }
 sub content     { $_[0]->{_content} }
 
+1;
 
 =head1 NAME
 
@@ -31,6 +32,14 @@ Shaq::CMSを構成する最小単位のデータ。
 
 =head1 METHODS
 
-=cut
+=head2 new
 
-1;
+=head2 basename
+
+=head2 title
+
+=head2 keywords
+
+=head2 description
+
+=head2 content

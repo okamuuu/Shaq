@@ -13,6 +13,8 @@ use Shaq::CMS::Menu;
 sub new {
     my ( $class, $config ) = @_;
 
+    ### XXX: $Binへの依存は自身が使う分には便利だが第三者がこのコードを見た時
+    ### 「ん!?」となるので一瞬思考コストを奪ってしまう恐れがある
     my $name       = $config->{name};
     my $doc_dir    = $config->{doc_dir} || dir( $Bin, '..', 'doc' );
     my $root_dir   = $config->{root_dir} || dir( $Bin, '..', 'root' );
@@ -95,7 +97,7 @@ sub dir2category {
     }
 
     my $category = Shaq::CMS::Category->new(
-        name     => $dirname, # FIXME: どうやって設定するか考える <- ハイフンで区切る？
+        name     => $dirname, # FIXME: どうやって設定するか考える
         dirname  => $dirname,
         menus    => [@menus],
         archives => [@all_archives]
@@ -108,8 +110,9 @@ sub dir2menu {
     die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-    my @list = $dir->dir_list;
-    my $dirname = $list[-1];
+#    my @list = $dir->dir_list;
+#    my $dirname = $list[-1];
+    my $dirname = $dir->dir_list(-1);
    
     ### 先頭にアンダースコアがあるディレクトリは下書きだよ
     return if $dirname =~ m/^_/; 
@@ -131,8 +134,9 @@ sub dir2archives {
     die("the param must be Path::Class::Dir.")
       unless $dir->isa('Path::Class::Dir');
 
-    my @list = $dir->dir_list;
-    my $dirname = $list[-1];
+#    my @list = $dir->dir_list;
+#    my $dirname = $list[-1];
+    my $dirname = $dir->dir_list(-1);
  
     $dirname =~ m/
                     ^
@@ -151,12 +155,6 @@ sub file2archive {
     Carp::croak("the param must be Path::Class::File.")
       unless $file->isa('Path::Class::File');
 
-    
-    # 先頭にアンダースコアがある場合、そのファイルは下書きです
-    # ここでこの処理がないとこうなる??先頭に^つけてるんだけどなー??
-    # _03-mail_ssl.txt => 04-04.html 
-    return if $file->basename =~ m/^_/; 
-
     $file->basename =~ m/
                           ^
                           \d+               # 並び順
@@ -164,7 +162,7 @@ sub file2archive {
                           (\w*)             # ファイル名、-は指定できない仕様
                           \.txt             # 拡張子
                           $
-                       /x;
+                       /x or return; ### matchしない場合は即座にリターン
 
     my $basename = ( $1 eq 'index' ) ? 'index' : $dir_num . "-" . $1;
     $self->parser->parse( basename => $basename, text => scalar $file->slurp ) or undef;

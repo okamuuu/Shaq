@@ -11,14 +11,14 @@ has name => (
 has dirname => ( is => 'ro', isa => 'Str', required => 1 );
 
 has archives  => ( 
-    metaclass => 'Collection::Array',
+#    metaclass => 'Collection::Array',
     is => 'ro', 
     isa => 'ArrayRef[Shaq::CMS::Archive]', 
     auto_deref => 1,
 );
 
 has menus   => ( 
-    metaclass => 'Collection::Array',
+#    metaclass => 'Collection::Array',
     is => 'ro', 
     isa => 'ArrayRef[Shaq::CMS::Menu]', 
 #    auto_deref => 1,

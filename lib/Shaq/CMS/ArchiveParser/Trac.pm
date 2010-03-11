@@ -1,14 +1,12 @@
 package Shaq::CMS::ArchiveParser::Trac;
-use Any::Moose;
-with 'Shaq::CMS::ArchiveParser::Parser';
+use Mouse;
+with 'Shaq::CMS::ArchiveParser::Role';
 use Carp;
 use Shaq::CMS::Archive;
 use Text::Trac;
 use Web::Scraper;
 
-__PACKAGE__->meta->make_immutable;
-
-no Any::Moose;
+no Mouse;
 
 sub parse {
     my ( $self , %arg ) = @_;
@@ -53,20 +51,13 @@ sub parse {
     my $archive = Shaq::CMS::Archive->new( %param );
 }
 
+__PACKAGE__->meta->make_immutable;
+
 =head1 NAME
 
-CMS::Lite::ArchiveParser::Trac - Trac形式に変換
-
-=head1 DESCRIPTION
-
-Trac 形式のテキストデータをArchiveクラスに格納できる形式に変換
+Shaq::CMS::ArchiveParser::Trac - Wiki構文をxhtmlを含むArchiveオブジェクトに変換
 
 =head1 METHODS
 
 =head2 parse
-
-=cut
-
-
-1;
 

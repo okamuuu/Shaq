@@ -1,4 +1,4 @@
-package Shaq::CMS::ArchiveParser::Parser;
+package Shaq::CMS::ArchiveParser::Role;
 use Mouse::Role;
 
 requires 'parse';

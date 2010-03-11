@@ -87,7 +87,7 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 
-CMS::Lite::Category - store archive data into this class
+Shaq::CMS::Category - store archive data into this class
 
 =head1 DESCRIPTION
 
@@ -96,8 +96,8 @@ Menuで使用するリストも内包する
 
 =head1 METHODS
 
-=cut
+=head2 get_list
 
-
+=head2 add_list
 
 
