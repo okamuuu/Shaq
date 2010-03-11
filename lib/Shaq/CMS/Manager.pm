@@ -23,6 +23,7 @@ sub new {
 
     Carp::croak("Please set param 'name' ...") unless $name;
 
+    #### FIXME: 野暮ったい
     for my $dir ( $doc_dir, $root_dir, $backup_dir ) {
         Carp::croak("$dir is not 'Path::Class::Dir' ...")
           unless $dir->isa('Path::Class::Dir');
@@ -31,6 +32,7 @@ sub new {
     my $parser_module = "Shaq::CMS::ArchiveParser::" . $parser;
     $parser_module->use or die $@;
 
+    ### FIXME: すでにMouse::Roleで定義しているな...
     Carp::croak("$parser_module couldn't does 'parse' ...")
       unless $parser_module->can('parse');
 
@@ -97,7 +99,7 @@ sub dir2category {
     }
 
     Shaq::CMS::Category->new(
-        name     => $dirname, # FIXME: どうやって設定するか考える
+        name     => $dirname, # FIXME: <最重要課題>どうやって設定するか考える
         dirname  => $dirname,
         menus    => [@menus],
         archives => [@all_archives]
@@ -137,7 +139,8 @@ sub dir2archives {
                     $
                 /x or return;
 
-    grep { defined $_ }
+    my @archives =
+      grep { defined $_ }
       map { $self->file2archive( $1, $_ ) }
       sort { "$a" cmp "$b" } $dir->children;
 }
