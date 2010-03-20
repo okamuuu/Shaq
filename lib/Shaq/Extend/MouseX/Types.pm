@@ -1,7 +1,6 @@
 package Shaq::Extend::MouseX::Types;
 use strict;
 use warnings;
-use 5.8.1;
 use DateTime();
 use DateTime::Format::Strptime();
 use Mouse::Util::TypeConstraints;
@@ -18,10 +17,12 @@ class_type 'DateTime' => { class => 'DateTime' };
 subtype DateTime, as 'DateTime';
 
 coerce 'DateTime', from Str, via {
+    my $str = $_;
+    $str =~ s/T/ /;
     my $dt = DateTime::Format::Strptime->new(
         pattern   => '%Y-%m-%d %H:%M:%S',
         time_zone => 'Asia/Tokyo',
-    )->parse_datetime($_);
+    )->parse_datetime($str);
     return 'DateTime'->from_object( object => $dt );
 };
 
