@@ -8,7 +8,7 @@ use Path::Class qw/dir file/;
 use Data::Page;
 use Data::Dumper;
 use lib dir($Bin, '..', 'lib')->stringify;
-use Shaq::Api::Skinny::Profiler;
+use Shaq::Unit::Skinny::Profiler;
 
 sub new {
     my ( $class, $config ) = @_;
@@ -48,7 +48,7 @@ sub set_master_db {
 
     if ( $self->config->{master}->{log_mode} ) {
         $db->attribute->{profile} = 1;
-        $db->{profiler} = Shaq::Api::Skinny::Profiler->new({log_path=>$self->config->{master}->{query_log_path}});
+        $db->{profiler} = Shaq::Unit::Skinny::Profiler->new({log_path=>$self->config->{master}->{query_log_path}});
     }
 
     $self->{_master_db} = $db;
@@ -65,7 +65,7 @@ sub set_slave_db {
 
     if ( $self->config->{slave}->{log_mode} ) {
         $db->attribute->{profile} = 1;
-        $db->{profiler} = Shaq::Api::Skinny::Profiler->new({ log_path => $self->config->{slave}->{query_log_path}});
+        $db->{profiler} = Shaq::Unit::Skinny::Profiler->new({ log_path => $self->config->{slave}->{query_log_path}});
     }
    
     $self->{_slave_db} = $db;
