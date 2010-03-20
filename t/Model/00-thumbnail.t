@@ -6,25 +6,25 @@ use Test::Differences;
 use Shaq::Model::Thumbnail;
 use JSON;
 
-my $thumbnail = Shaq::Model::Thumbnail->new(
+my $thumbnail = Shaq::Model::Thumbnail->new({
     src => '/path/to',
     alt => 'test',
     width => 80,
     height => 70,
-);
+});
 
 subtest "xhtml" => sub {
     eq_or_diff $thumbnail->xhtml, qq{<img src="/path/to" alt="test" width="80" height="70" />};
     done_testing();
 };
 
-subtest "to_json" => sub {
+subtest "obj2json" => sub {
 
-    eq_or_diff $thumbnail->to_json,
+    eq_or_diff $thumbnail->obj2json,
       qq({"src":"/path/to", "alt":"test", "width":"80", "height":"70"});
 
     ### JSONでパースできるか確かめる
-    my $hashref = decode_json $thumbnail->to_json;
+    my $hashref = decode_json $thumbnail->obj2json;
     ok($hashref);
 
     is_deeply( $hashref,

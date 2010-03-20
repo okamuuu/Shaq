@@ -1,5 +1,6 @@
 package Shaq::Model::Thumbnail;
 use Mouse;
+use JSON;
 
 has src => ( is => 'rw' );
 has alt => ( is => 'rw' );
@@ -9,8 +10,8 @@ has height => ( is => 'rw' );
 no Mouse;
 
 sub BUILDARGS {
-    my ( $self, $args ) = @_;
-    return $args;
+    my ( $self, $data ) = @_;
+    return $data;
 }
 
 sub xhtml {
@@ -24,7 +25,8 @@ sub xhtml {
     my $xhtml = qq{<img src="$src" alt="$alt" width="$width" height="$height" />};
 }
 
-sub to_json {
+### to_jsonがJSON.pmと重複してるらしい
+sub obj2json {
     my ($self) = @_;
 
     my $src    = $self->src;
