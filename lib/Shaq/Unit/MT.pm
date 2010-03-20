@@ -20,7 +20,7 @@ sub new {
         tag_end      => '%>',
         line_start   => '%',
         wrapper_file => $wrapper,
-        extension    => undef,
+        extension    => '',
         include_path => [$tmpl_dir],
         use_cache => 1,
         open_layer => ':utf8',
