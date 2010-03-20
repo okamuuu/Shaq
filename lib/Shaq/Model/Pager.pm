@@ -110,7 +110,7 @@ sub xhtml {
     }
     $xhtml .= "<!-- pager[end] -->\n";
 
-    $self->cache($xhtml); ### XXX: リファレンス渡し問題ないならそうしたいが…
+    $self->cache($xhtml);
     return $xhtml;
 }
 
