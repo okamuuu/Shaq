@@ -1,38 +1,66 @@
 package Shaq::Unit::WebService::Lite;
 use Mouse;
 use UNIVERSAL::require;
-use Data::Dumper;
 use LWP::UserAgent;
+use Digest::MD5 qw/md5_hex/;
+use Cache::Memcached::Fast;
 
 our $VERSION = '0.03';
 
 has 'uri'    => ( is => 'ro', isa => 'URI', required => 1 );
-has 'base_param' => ( is => 'ro', isa => 'HashRef', auto_deref => 1);
+has 'base_param' => ( is => 'ro', isa => 'HashRef', auto_deref => 1 );
 has 'cache'  => ( is => 'ro', isa => 'Cache::Memcached::Fast',  predicate => 'has_cache');
-has 'parser' => ( is => 'ro', isa => 'Shaq::Unit::WebService::Lite::Parser' );
+has 'parser' => ( is => 'ro', does => 'Shaq::Unit::WebService::Lite::Parser' );
+has 'expire' => ( is => 'ro');
 has 'ua'     => ( is => 'ro', default => sub { LWP::UserAgent->new } );
 
 no Mouse;
 
+### Mouseにもっと任せたいがこう書くほうが楽なんだよという言い分
 sub BUILDARGS {
     my ( $self, $config ) = @_;
 
-    my $parser = "Shaq::Unit::WebService::Lite::Parser::" . $config->{parser};
+    my $servers    = $config->{cache}->{servers} || [ { address => 'localhost:11211'} ];
+    my $namespace  = $config->{cache}->{namespace} || 'ws#';
+    my $expire     = $config->{cache}->{expire} || 60 * 60 * 24;
+    my $parser     = $config->{parser} || "XML::Simple";
+    my $uri        = $config->{uri};
+    my $base_param = $config->{base_param} || {};
+
+    my $cache_obj = Cache::Memcached::Fast->new(
+        {
+            servers   => $servers,
+            namespace => $namespace,
+        }
+    );
+
+    Carp::croak("Please run memcached  ...")
+      unless keys %{ $cache_obj->server_versions };
+
+    $parser = "Shaq::Unit::WebService::Lite::Parser::" . $parser;
     $parser->require or die $@;
-    
-    $config->{parser} = $parser->new;    
-    return $config;
+    my $parser_obj = $parser->new;
+     
+    my $uri_obj = URI->new($uri);
+
+    return my $opt = {
+        cache      => $cache_obj,
+        parser     => $parser_obj,
+        uri        => $uri_obj,
+        base_param => $base_param,
+        expire     => $expire,
+    };
 }
 
 sub get {
     my ( $self, $extra ) = @_;
 
     my $path  = $extra->{path} || undef;
-    my $param = $extra->{param} || undef;
+    my $param = $extra->{param} || {};
 
     my $uri = $self->uri->clone;
 
-    $uri->path( $uri->path, $path ) if $path;
+    $uri->path( $uri->path . $path ) if $path;
     $uri->query_form( { $self->base_param, %$param } );
 
     my $response;
@@ -43,7 +71,7 @@ sub get {
             $response = $self->ua->get($uri->as_string);
         
             $response->is_success
-              ? $self->_cache_set( $uri->as_string, $response )
+              ? $self->_cache_set( $uri->as_string, $response, $self->expire )
               : Carp::croak("request failed to : " . $uri->as_string );
         }
     }
