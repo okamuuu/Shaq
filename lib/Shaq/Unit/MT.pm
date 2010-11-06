@@ -1,4 +1,5 @@
 package Shaq::Unit::MT;
+use utf8;
 use strict;
 use warnings;
 use Text::MicroTemplate::Extended;

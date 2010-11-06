@@ -14,6 +14,11 @@ has 'breads' => (
 
 no Mouse;
 
+sub init {
+    my ($self) = @_;
+    $self->breads([ { dir => '/', name => 'home' } ]);
+}
+
 sub xhtml {
     my ($self) = @_;
 

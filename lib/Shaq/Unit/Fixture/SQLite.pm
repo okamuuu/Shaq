@@ -14,6 +14,7 @@ use Path::Class qw/dir file/;
 our $DB_FILE     = file( cwd(), 'db', '_test.db'   );
 our $SQL_FILE    = file( cwd(), 'db', 'schema.sql' );
 our $FIXTURE_DIR = dir(  cwd(), 'db', 'fixture'    );
+our $BUILD_MODE  = 0;
 
 my %IS_JSON;
 
@@ -23,7 +24,8 @@ sub setup {
 
     %IS_JSON = map { $_ => 1 } @{ $opt{json_columns} };
 
-    ### XXX: t/Unit/Fixture/SQLite/00-basic.t .. DBD::SQLite::db do failed: not an error at /home/okamura/p5/Shaq/lib/Shaq/Unit/Fixture/SQLite.pm line 23.
+    ### XXX: t/Unit/Fixture/SQLite/00-basic.t .. 
+    ### DBD::SQLite::db do failed: not an error at /home/okamura/p5/Shaq/lib/Shaq/Unit/Fixture/SQLite.pm line 23.
     my $dbh = DBI->connect("dbi:SQLite:$DB_FILE", '', '');
     my @statements = split ';', scalar $SQL_FILE->slurp;
     $dbh->do($_) for @statements;
@@ -79,7 +81,7 @@ sub _fixture2queries {
 }
 
 sub END {
-    unlink $DB_FILE;
+    unlink $DB_FILE if not $BUILD_MODE;
 }
 
 1;

@@ -16,9 +16,9 @@ has 'ua'     => ( is => 'ro', default => sub { LWP::UserAgent->new } );
 
 no Mouse;
 
-### Mouseにもっと任せたいがこう書くほうが楽なんだよという言い分
 sub BUILDARGS {
-    my ( $self, $config ) = @_;
+    my $self = shift;
+    my $config = @_ == 1 ? shift : {@_};
 
     my $servers    = $config->{cache}->{servers} || [ { address => 'localhost:11211'} ];
     my $namespace  = $config->{cache}->{namespace} || 'ws#';

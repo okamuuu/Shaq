@@ -15,7 +15,7 @@ sub BUILDARGS {
 }
 
 sub xhtml {
-    my ($self) = @_;
+    my $self = shift;
 
     my $src    = $self->src;
     my $alt    = $self->alt;
@@ -25,9 +25,8 @@ sub xhtml {
     my $xhtml = qq{<img src="$src" alt="$alt" width="$width" height="$height" />};
 }
 
-### to_jsonがJSON.pmと重複してるらしい
-sub obj2json {
-    my ($self) = @_;
+sub model2json {
+    my $self = shift;
 
     my $src    = $self->src;
     my $alt    = $self->alt;
@@ -59,4 +58,5 @@ Shaq::Model::Thumbnail - Model
 
 =head2 xhtml
 
+=head2 model2json
 
