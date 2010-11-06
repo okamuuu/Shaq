@@ -1,7 +1,11 @@
 NAME
-    Shaq
+----
+
+Shaq
 
 SYNOPSIS
+--------
+
     use Shaq::Unit::Config;
     use Shaq::Unit::MT;
 
@@ -9,10 +13,13 @@ SYNOPSIS
     my $mt = Shaq::Unit::MT->new($config->{unit}->{mt});
 
 WARNINGS
+--------
+
     This is my personal, toy and experimental my project.
     This Api will added, updated or removed without any notice.
 
 COPYRIGHT AND LICENCE
+---------------------
 
 Copyright (C) 2010 okamura
 
