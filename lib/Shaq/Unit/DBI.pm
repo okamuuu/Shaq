@@ -5,19 +5,22 @@ use base qw/DBI/;
 
 our $MASTER;
 our $SLAVE;
-our $QUERY_LOG_PATH;
+our $LOG_FILE;
 
 sub get_master_dbh {
-    my $class = shift;
-
-    my $dbh = DBI->connect( @{$MASTER}, {RaiseError=>1} ) or die "$DBI::errstr";
+    $_[0]->connect( @{$MASTER}, { RaiseError => 1 } ) or die "$DBI::errstr";
 }
 
 sub get_slave_dbh {
-    my $class = shift;
-
-    my $dbh = DBI->connect( @{$SLAVE}, {RaiseError=>1} ) or die "$DBI::errstr";
+    $_[0]->connect( @{$SLAVE}, { RaiseError => 1 } ) or die "$DBI::errstr";
 }
+
+### These subs are almost for Test::memcached..
+sub get_master_dsn { $_[0]->get_master_dbh->get_info(2); }
+
+sub get_slave_dsn  { $_[0]->get_slave_dbh->get_info(2); }
+
+1;
 
 package Shaq::Unit::DBI::db;
 use base qw/DBI::db/;
@@ -27,49 +30,49 @@ use strict;
 use warnings;
 use base qw/DBI::st/;
 
-use Time::HiRes qw();
+use Time::HiRes ();
 
 sub execute {
-    my ($self, @bind_params) = @_;
+    my ($self, @binds) = @_;
 
-    if ($QUERY_LOG_PATH) {
+    my $rv;
+    if ($LOG_FILE) {
+        
         my $start  = Time::HiRes::time();
-        my $rv     = $self->SUPER::execute(@bind_params);
+        $rv     = $self->SUPER::execute(@binds);
         my $elapse = Time::HiRes::time() - $start;
 
-        print STDERR
-          sprintf( 'sql: %s, elapse: %f', $self->{Statement}, $elapse );
+        my $bind = @binds ? join ', ', @binds : undef;
+
+        my $log = sprintf( "sql: %s bind: %s \nelapse: %f\n\n",
+            $bind, $self->{Statement}, $elapse );
+
+        $LOG_FILE->open('a')->print($log);
+    }
+    else {
+        $rv     = $self->SUPER::execute(@binds);
     }
 
     return $rv;
 
 }
 
+1;
+
 =head1 NAME
 
-Shaq::Unit::DBI - DBIの拡張クラス
+Shaq::Unit::DBI - This providing DBI Factory methods.
 
 =head2 SYNOPSYS
 
-    use DBI;
-    DBI->connect('dbi:mysql:dbname=hoge', 'username', 'password', +{ RootClass => 'Shaq::Unit::DBI' });
-
     use Shaq::Unit::DBI;
     my $master = Shaq::Unit::DBI->get_master_dbh; 
+    my $dsn    = Shaq::Unit::DBI->get_master_dsn;
+
+    use Test::Mysqld;
+
 
 =head2 DESCRIPTION
 
-    use Data::Dumper;
-
-    my $dbh = DBI->connect('dbi:mysql:dbname=hoge', 'username', 'password', +{ RootClass => 'Shaq::Unit::DBI' });
-    my $sth = $dbh->prepare('SHOW TABLES');
-    $sth->execute;
-    
-    print Dumper($sth->fetchall_arrayref(+{}));
-    $sth->finish;
-    $dbh->disconnect;
-
 =cut
-
-1;
 
