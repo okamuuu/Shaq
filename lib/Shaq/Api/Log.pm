@@ -22,7 +22,7 @@ sub set_log_msgs { shift->set_log_msg($_) for @_ }
 sub set_log_msg {
     my ( $self, $msg ) = @_;
 
-    my $elapsed = Time::HiRes::tv_interval($self->start, [gettimeofday]);
+    my $elapsed = Time::HiRes::tv_interval($self->start, [Time::HiRes::gettimeofday]);
     $self->{_logs} = [ $self->get_logs, "$msg ( $elapsed sec )" ];
 }
 
