@@ -12,7 +12,7 @@ sub new {
 
 sub get_status_msgs { @{ $_[0]->{_status_msgs} }  }
 
-sub has_status_msgs { scalar $_[0]->get_status }
+sub has_status_msgs { scalar $_[0]->get_status_msgs }
 
 sub set_status_msgs {
     my ( $self, @new_messages ) = @_;
@@ -22,7 +22,7 @@ sub set_status_msgs {
 
 sub get_error_msgs { @{ $_[0]->{_error_msgs} } }
 
-sub has_errors { scalar $_[0]->get_error_msgs }
+sub has_error_msgs { scalar $_[0]->get_error_msgs }
 
 sub set_error_msgs {
     my ( $self, @new_messages ) = @_;
