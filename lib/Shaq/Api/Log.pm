@@ -1,4 +1,4 @@
-package Shaq::Api::Msg;
+package Shaq::Api::Log;
 use strict;
 use warnings;
 use Time::HiRes ();
@@ -17,13 +17,16 @@ sub get_log_msgs { @{ $_[0]->{_log_msgs} }  }
 
 sub has_log_msgs { scalar $_[0]->get_log_msgs }
 
-sub set_log_msgs { shift->set_log_msg($_) for @_ }
+sub set_log_msgs { 
+    my ($self, @msgs) = @_;
+    $self->set_log_msg($_) for @msgs;
+}
 
 sub set_log_msg {
     my ( $self, $msg ) = @_;
 
     my $elapsed = Time::HiRes::tv_interval($self->start, [Time::HiRes::gettimeofday]);
-    $self->{_logs} = [ $self->get_logs, "$msg ( $elapsed sec )" ];
+    $self->{_log_msgs} = [ $self->get_log_msgs, "$msg ( $elapsed sec )" ];
 }
 
 1;
