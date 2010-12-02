@@ -2,17 +2,25 @@ use inc::Module::Install;
 
 name     'Shaq';
 all_from 'lib/Shaq.pm';
-author   'okamura <okamuuuuu@gmail.com>';
+author   'okamura <okamuuu@gmail.com>';
 license  'perl';
 
-requires 'FCGI::Client'
+requires 'DBI';
 requires 'Carp';
-requires 'Devel::NYTProf'
+requires 'Devel::NYTProf';
 requires 'UNIVERSAL::require';
-requires 'Test::MicroTemplate::File';
 requires 'XML::LibXML';
 requires 'XML::Feed';
-requires 'DateTimeX::Web';
+requires 'Path::Class';
+requires 'Hash::MultiValue';
+requires 'YAML';
+
+requires 'Test::Perl::Critic';
+requires 'Test::Base';
+requires 'Test::Harness';
+requires 'Test::Pod';
+requires 'Test::Requires';
+requires 'Test::Most';
 
 build_requires 'Test::More';
 
