@@ -14,6 +14,13 @@ requires 'XML::Feed';
 requires 'Path::Class';
 requires 'Hash::MultiValue';
 requires 'YAML';
+requires 'Router::Simple';
+requires 'UNIVERSAL::require';
+
+requires 'parent';
+requires 'Plack::Test';
+requires 'Test::Memcached';
+requires 'Test::mysqld';
 
 requires 'Test::Perl::Critic';
 requires 'Test::Base';
@@ -23,10 +30,5 @@ requires 'Test::Requires';
 requires 'Test::Most';
 
 build_requires 'Test::More';
-
-auto_install;
-
+auto_include;
 WriteAll;
-
-
-
