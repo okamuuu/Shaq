@@ -9,7 +9,7 @@ use Carp ();
 
 sub app {
     my $class = shift;
-    my %args = @_ == 1 ? @{$_[0]} : @_;
+    my %args = @_ == 1 ? %{$_[0]} : @_;
   
     my $router      = delete $args{router};
     my $controllers = delete $args{controllers};
