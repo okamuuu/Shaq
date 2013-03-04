@@ -1,8 +1,6 @@
 language: perl
+install: cpanm --installdeps --notest --verbose .
+before_install:
+  - cpanm --notest inc::Module::Install Module::Install::AuthorTests Module::Install::ReadmeMarkdownFromPod Module::Install::Repository
 perl:
-  - "5.14"
-  - "5.12"
-  - "5.10"
-notifications:
-  email:
-    - okamuuu@gmamil.com
+  - "5.16"
