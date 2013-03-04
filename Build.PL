@@ -9,14 +9,23 @@ my $build = Module::Build->new(
     build_requires       => {
         'Test::Requires' => '0.06',
         'Test::More'     => '0.98',
+        'Test::Most'     => '0',
+        'Test::Differences' => '0',
+        'Test::Memcached' => 0,
+        'Test::mysqld' => 0,
     },
     configure_requires => { 'Module::Build' => '0.38' },
     requires           => {
         'perl'                       => '5.008001',
         'Exporter'                   => '0',
+        'UNIVERSAL::require'         => '0',
+        'YAML'                       => '0',
+        'Path::Class'                => '0',
         'parent'                     => '0.223',
         'Try::Tiny'                  => '0.06',
         'URI'                        => '1.54',
+        'Text::MicroTemplate' => '0',
+        'Text::MicroTemplate::Extended' => '0',
         'Plack'                      => '0.9982', # sanity check to remove newlines from headers
         'Plack::Session'             => '0', # required in Amon2::Web
         ($] < 5.009_005 ?  ('MRO::Compat' => '0.11') : ()),
@@ -32,7 +41,7 @@ my $build = Module::Build->new(
 
     script_files => [],
 
-    test_files => ( -d '.git' || $ENV{RELEASE_TESTING} ) ? 't/ xt/' : 't/',
+    test_files => 't/',
 
     create_readme  => 1,
     create_license => 1,
